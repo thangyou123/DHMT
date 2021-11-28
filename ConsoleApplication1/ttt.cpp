@@ -30,7 +30,7 @@ float camera_height = 2;
 float camera[3];
 float cameraState[7];
 bool lightState = true;
-GLfloat camera_angle = 15.0;
+GLfloat camera_angle = 0;
 GLfloat	fHalfSize = 15;
 GLfloat fConstFS = fHalfSize;
 
@@ -103,19 +103,9 @@ public:
 	{
 		x = v.x; y = v.y; z = v.z;
 	}
-	Vector3 cross(Vector3 b);
-	float dot(Vector3 b);
+
 };
 
-Vector3 Vector3::cross(Vector3 b)
-{
-	Vector3 c(y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x);
-	return c;
-}
-float Vector3::dot(Vector3 b)
-{
-	return x * b.x + y * b.y + z * b.z;
-}
 void Vector3::normalize()
 {
 	float temp = sqrt(x * x + y * y + z * z);
@@ -190,80 +180,72 @@ public:
 	void DrawColor();
 	void SetColor(int colorIdx);
 	void addMaterial(float ambient[], float diffuse[], float specular[], float shiness);
-	void CreateCube(float	fSize, float t);
-	void CreateCube2(float	fSize, float t);
-	void CreateCube3(float	fSize, float t);
-	void CreateCube4(float	fSize, float t);
-	void CreateCube5(float	fSize, float t);
-	void CreateCube6(float	fSize, float t);
-	void CreateCylinder(int nSegment, float fHeight, float fRadius);
-	void CreateRectangular(float fLength, float fWidth, float fHeight);
-	void CreateShape1(float fLength, float fWidth, float fHeight);
-	void CreateShape2(float fLength, float fWidth, float fHeight);
-	void CreateHalfCylinder1(int nSegment, float fHeight, float fRadius);
-	void CreateHalfCylinder2(int nSegment, float fHeight, float fRadius, float fLength);
-	void CreateShape3_1(float fLength, float fWidth, float fHeight);
-	void CreateShape3_2(float fLength, float fWidth, float fHeight);
-	void CreateShape3_3(float fLength, float fWidth, float fHeight);
-	void CreateShape4(float day, float rong, float cao);
-	void CreateNuaVongTron(float t, float fx, float fHeight);
-	void CreateNuaVongTron2(float t, float fx, float fHeight);
-	void CreateNuaVongTron3(float t, float fx, float fHeight);
-	void CreateNuaVongTronThanGiua(float t, float fx, float fHeight, float h);
-	void CreateNuaVongTronThanGiua2(float t, float fx, float fHeight, float h);
-	void CreateNuavongtron1_1(float t, float fx, float fHeight);
-	void CreateNuavongtron1_2(float t, float fx, float fHeight);
-	void CreateNuavongtron1_3(float t, float fx, float fHeight);
+	void CreateCube(float t);
+	void CreateCube2(float t);
+	void CreateCube3(float t);
+	void CreateCube4(float t);
+	void CreateCube5(float t);
+	void CreateCube6(float t);
+	void CreateHinhTru(int nso_lopchiament, float beday, float bankinh);
+	void CreateRectangular(float chieu_dai, float chieu_rong, float beday);
+	void CreateNuaVongTron(float t, float fx, float beday);
+	void CreateNuaVongTron2(float t, float fx, float beday);
+	void CreateNuaVongTron3(float t, float fx, float beday);
+	void CreateNuaVongTronThanGiua(float t, float fx, float beday, float h);
+	void CreateNuaVongTronThanGiua2(float t, float fx, float beday, float h);
+	void CreateNuavongtron1_1(float t, float fx, float beday);
+	void CreateNuavongtron1_2(float t, float fx, float beday);
+	void CreateNuavongtron1_3(float t, float fx, float beday);
 
 
 	void vectorNewell();
 
 };
 
-void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float fHeight, float h) {
-	int Seg = 32;
-	numVerts = Seg * 4 + 2;
+void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float beday, float h) {
+	int so_lopchia = 32;
+	numVerts = so_lopchia * 4 + 2;
 	pt = new Point3[numVerts];
 
-	float fRadius = t;
+	float bankinh = t;
 	int		i;
 	int		idx;
-	float	fAngle = (PI) / (Seg - 1.0);
+	float	do_quay = (PI) / (so_lopchia - 1.0);
 	float	x, y, z, x2, z2;
 
-	pt[0].set(0, fHeight / 2, 0);
-	pt[2 * Seg].set(0, fHeight / 2, 0);
-	for (i = 0; i < Seg; i++)
+	pt[0].set(0, beday / 2, 0);
+	pt[2 * so_lopchia].set(0, beday / 2, 0);
+	for (i = 0; i < so_lopchia; i++)
 	{
-		x2 = fRadius * -sin(fAngle * i) * h;
-		z2 = fRadius * -cos(fAngle * i) * h;
+		x2 = bankinh * -sin(do_quay * i) * h;
+		z2 = bankinh * -cos(do_quay * i) * h;
 
-		x = (fRadius + fx) * -sin(fAngle * i) * h;
-		z = (fRadius + fx) * -cos(fAngle * i) * h;
-		y = fHeight / 2;
+		x = (bankinh + fx) * -sin(do_quay * i) * h;
+		z = (bankinh + fx) * -cos(do_quay * i) * h;
+		y = beday / 2;
 
 		pt[i + 1].set(x, y, z);
-		pt[i + 1 + Seg + Seg].set(x2, y, z2);
+		pt[i + 1 + so_lopchia + so_lopchia].set(x2, y, z2);
 
-		y = -fHeight / 2;
-		pt[i + 1 + Seg].set(x, y, z);
-		pt[i + 1 + Seg + Seg + Seg].set(x2, y, z2);
+		y = -beday / 2;
+		pt[i + 1 + so_lopchia].set(x, y, z);
+		pt[i + 1 + so_lopchia + so_lopchia + so_lopchia].set(x2, y, z2);
 
 	}
 
-	pt[numVerts - 1].set(0, -fHeight / 2, 0);
+	pt[numVerts - 1].set(0, -beday / 2, 0);
 
-	numFaces = Seg * 4;
+	numFaces = so_lopchia * 4;
 	face = new Face[numFaces];
 
 	idx = 0;
 
-	for (i = 0; i < Seg - 1; i++)
+	for (i = 0; i < so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + Seg * 2;
-		face[idx].vert[1].vertIndex = i + 2 + Seg * 2;
+		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
+		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
 
 		face[idx].vert[2].vertIndex = i + 2;
 		face[idx].vert[3].vertIndex = i + 1;
@@ -271,12 +253,12 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float fHeight, float h)
 	}
 
 
-	for (i = Seg; i < 2 * Seg - 1; i++)
+	for (i = so_lopchia; i < 2 * so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + Seg * 2;
-		face[idx].vert[1].vertIndex = i + 2 + Seg * 2;
+		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
+		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
 
 		face[idx].vert[2].vertIndex = i + 2;
 		face[idx].vert[3].vertIndex = i + 1;
@@ -284,7 +266,7 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float fHeight, float h)
 	}
 
 
-	for (i = 0; i < Seg - 1; i++)
+	for (i = 0; i < so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
@@ -293,13 +275,13 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float fHeight, float h)
 
 		face[idx].vert[1].vertIndex = i + 2;
 
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + Seg;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + Seg;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
 
 		idx++;
 	}
 
-	for (i = 2 * Seg; i < 3 * Seg - 1; i++)
+	for (i = 2 * so_lopchia; i < 3 * so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
@@ -311,8 +293,8 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float fHeight, float h)
 
 		face[idx].vert[1].vertIndex = i + 2;
 
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + Seg;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + Seg;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
 
 		idx++;
 	}
@@ -324,71 +306,71 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float fHeight, float h)
 
 
 }
-void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float fHeight, float h) {
-	int Seg = 32;
-	numVerts = Seg * 4 + 2;
+void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float beday, float h) {
+	int so_lopchia = 32;
+	numVerts = so_lopchia * 4 + 2;
 	pt = new Point3[numVerts];
 
-	float fRadius = t;
+	float bankinh = t;
 	int		i;
 	int		idx;
-	float	fAngle = (PI) / (Seg - 1.0);
+	float	do_quay = (PI) / (so_lopchia - 1.0);
 	float	x, y, z, x2, z2;
 
-	pt[0].set(0, fHeight / 2, 0);
-	pt[2 * Seg].set(0, fHeight / 2, 0);
-	for (i = 0; i < Seg; i++)
+	pt[0].set(0, beday / 2, 0);
+	pt[2 * so_lopchia].set(0, beday / 2, 0);
+	for (i = 0; i < so_lopchia; i++)
 	{
-		x2 = fRadius * -sin(fAngle * i) * h;
-		z2 = fRadius * -cos(fAngle * i) * h;
+		x2 = bankinh * -sin(do_quay * i) * h;
+		z2 = bankinh * -cos(do_quay * i) * h;
 
-		x = (fRadius)*sin(fAngle * i) * h + 5.0;
-		z = (fRadius)*cos(fAngle * i) * h;
-		y = fHeight / 2;
+		x = (bankinh)*sin(do_quay * i) * h + fx;
+		z = (bankinh)*cos(do_quay * i) * h;
+		y = beday / 2;
 
 		pt[i + 1].set(x, y, z);
-		pt[i + 1 + Seg + Seg].set(x2, y, z2);
+		pt[i + 1 + so_lopchia + so_lopchia].set(x2, y, z2);
 
-		y = -fHeight / 2;
-		pt[i + 1 + Seg].set(x, y, z);
-		pt[i + 1 + Seg + Seg + Seg].set(x2, y, z2);
+		y = -beday / 2;
+		pt[i + 1 + so_lopchia].set(x, y, z);
+		pt[i + 1 + so_lopchia + so_lopchia + so_lopchia].set(x2, y, z2);
 
 	}
 
-	pt[numVerts - 1].set(0, -fHeight / 2, 0);
+	pt[numVerts - 1].set(0, -beday / 2, 0);
 
-	numFaces = Seg * 4;
+	numFaces = so_lopchia * 4;
 	face = new Face[numFaces];
 
 	idx = 0;
 
-	for (i = 0; i < Seg - 1; i++)
+	for (i = 0; i < so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + Seg * 2;
-		face[idx].vert[1].vertIndex = (Seg - i - 2) + 2;
+		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
+		face[idx].vert[1].vertIndex = (so_lopchia - i - 2) + 2;
 
-		face[idx].vert[2].vertIndex = (Seg - i - 2) + 1;
-		face[idx].vert[3].vertIndex = i + 2 + Seg * 2;;
+		face[idx].vert[2].vertIndex = (so_lopchia - i - 2) + 1;
+		face[idx].vert[3].vertIndex = i + 2 + so_lopchia * 2;;
 		idx++;
 	}
 
 
-	for (i = Seg; i < 2 * Seg - 1; i++)
+	for (i = so_lopchia; i < 2 * so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + Seg * 2;
-		face[idx].vert[1].vertIndex = (3 * Seg - i - 2) + 2;
+		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
+		face[idx].vert[1].vertIndex = (3 * so_lopchia - i - 2) + 2;
 
-		face[idx].vert[2].vertIndex = (3 * Seg - i - 2) + 1;
-		face[idx].vert[3].vertIndex = i + 2 + Seg * 2;
+		face[idx].vert[2].vertIndex = (3 * so_lopchia - i - 2) + 1;
+		face[idx].vert[3].vertIndex = i + 2 + so_lopchia * 2;
 		idx++;
 	}
 
 
-	for (i = 0; i < Seg - 1; i++)
+	for (i = 0; i < so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
@@ -397,13 +379,13 @@ void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float fHeight, float h
 
 		face[idx].vert[1].vertIndex = i + 2;
 
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + Seg;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + Seg;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
 
 		idx++;
 	}
 
-	for (i = 2 * Seg; i < 3 * Seg - 1; i++)
+	for (i = 2 * so_lopchia; i < 3 * so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
@@ -415,8 +397,8 @@ void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float fHeight, float h
 
 		face[idx].vert[1].vertIndex = i + 2;
 
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + Seg;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + Seg;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
 
 		idx++;
 	}
@@ -428,47 +410,47 @@ void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float fHeight, float h
 
 
 }
-void  Mesh::CreateNuaVongTron3(float t, float fx, float fHeight) {
-	int Seg = 32;
-	numVerts = Seg * 2 + 2;
+void  Mesh::CreateNuaVongTron3(float t, float fx, float beday) {
+	int so_lopchia = 32;
+	numVerts = so_lopchia * 2 + 2;
 	pt = new Point3[numVerts];
-	float fRadius = t;
+	float bankinh = t;
 	int		i;
 	int		idx;
-	float	fAngle = (PI - 30.0 * PI / 180) / (Seg - 1);
+	float	do_quay = (PI - 26.0 * PI / 180) / (so_lopchia - 1);
 	float	x, y, z;
 
-	pt[0].set(0, fHeight / 2, 0);
-	for (i = 0; i < Seg; i++)
+	pt[0].set(0, beday / 2, 0);
+	for (i = 0; i < so_lopchia; i++)
 	{
-		x = fRadius * sin(fAngle * i + 15.0 * PI / 180);
-		z = fRadius * cos(fAngle * i + 15.0 * PI / 180);
+		x = bankinh * sin(do_quay * i + 13.0 * PI / 180);
+		z = bankinh * cos(do_quay * i + 13.0 * PI / 180);
 		float dx = x * cos(-60 * PI / 180) - z * sin(-60 * PI / 180);
 		float dz = x * sin(-60 * PI / 180) + z * cos(-60 * PI / 180);
 		x = dx + 5 * cos(-60 * PI / 180);
 		z = dz + 5 * sin(-60 * PI / 180);
-		y = fHeight / 2;
-		if (i == 0 || i == Seg - 1) {
+		y = beday / 2;
+		if (i == 0 || i == so_lopchia - 1) {
 			x = 5 * cos(-60 * PI / 180);
 			z = 5 * sin(-60 * PI / 180);
 		}
 		pt[i + 1].set(x, y, z);
 
-		y = -fHeight / 2;
-		pt[i + 1 + Seg].set(x, y, z);
+		y = -beday / 2;
+		pt[i + 1 + so_lopchia].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -fHeight / 2, 0);
+	pt[numVerts - 1].set(0, -beday / 2, 0);
 
-	numFaces = Seg * 3;
+	numFaces = so_lopchia * 3;
 	face = new Face[numFaces];
 
 	idx = 0;
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = 1;
-		if (i < Seg - 1)
+		if (i < so_lopchia - 1)
 			face[idx].vert[1].vertIndex = i + 2;
 		else
 			face[idx].vert[1].vertIndex = 1;
@@ -476,32 +458,32 @@ void  Mesh::CreateNuaVongTron3(float t, float fx, float fHeight) {
 		idx++;
 	}
 
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 
 		face[idx].vert[0].vertIndex = i + 1;
-		if (i < Seg - 1)
+		if (i < so_lopchia - 1)
 			face[idx].vert[1].vertIndex = i + 2;
 		else
 			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + Seg;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + Seg;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
 
 		idx++;
 	}
 
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = Seg + 1;
-		if (i < Seg - 1)
-			face[idx].vert[2].vertIndex = i + 2 + Seg;
+		face[idx].vert[0].vertIndex = so_lopchia + 1;
+		if (i < so_lopchia - 1)
+			face[idx].vert[2].vertIndex = i + 2 + so_lopchia;
 		else
-			face[idx].vert[2].vertIndex = 1 + Seg;
-		face[idx].vert[1].vertIndex = i + 1 + Seg;
+			face[idx].vert[2].vertIndex = 1 + so_lopchia;
+		face[idx].vert[1].vertIndex = i + 1 + so_lopchia;
 		idx++;
 	}
 
@@ -510,47 +492,47 @@ void  Mesh::CreateNuaVongTron3(float t, float fx, float fHeight) {
 
 
 }
-void  Mesh::CreateNuaVongTron2(float t, float fx, float fHeight) {
-	int Seg = 32;
-	numVerts = Seg * 2 + 2;
+void  Mesh::CreateNuaVongTron2(float t, float fx, float beday) {
+	int so_lopchia = 32;
+	numVerts = so_lopchia * 2 + 2;
 	pt = new Point3[numVerts];
-	float fRadius = t;
+	float bankinh = t;
 	int		i;
 	int		idx;
-	float	fAngle = (PI - 30.0 * PI / 180) / (Seg - 1);
+	float	do_quay = (PI - 26.0 * PI / 180) / (so_lopchia - 1);
 	float	x, y, z;
 
-	pt[0].set(0, fHeight / 2, 0);
-	for (i = 0; i < Seg; i++)
+	pt[0].set(0, beday / 2, 0);
+	for (i = 0; i < so_lopchia; i++)
 	{
-		x = fRadius * sin(fAngle * i + 15.0 * PI / 180);
-		z = fRadius * cos(fAngle * i + 15.0 * PI / 180);
+		x = bankinh * sin(do_quay * i + 13.0 * PI / 180);
+		z = bankinh * cos(do_quay * i + 13.0 * PI / 180);
 		float dx = x * cos(60 * PI / 180) - z * sin(60 * PI / 180);
 		float dz = x * sin(60 * PI / 180) + z * cos(60 * PI / 180);
 		x = dx + 5 * cos(60 * PI / 180);
 		z = dz + 5 * sin(60 * PI / 180);
-		y = fHeight / 2;
-		if (i == 0 || i == Seg - 1) {
+		y = beday / 2;
+		if (i == 0 || i == so_lopchia - 1) {
 			x = 5 * cos(60 * PI / 180);
 			z = 5 * sin(60 * PI / 180);
 		}
 		pt[i + 1].set(x, y, z);
 
-		y = -fHeight / 2;
-		pt[i + 1 + Seg].set(x, y, z);
+		y = -beday / 2;
+		pt[i + 1 + so_lopchia].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -fHeight / 2, 0);
+	pt[numVerts - 1].set(0, -beday / 2, 0);
 
-	numFaces = Seg * 3;
+	numFaces = so_lopchia * 3;
 	face = new Face[numFaces];
 
 	idx = 0;
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = 1;
-		if (i < Seg - 1)
+		if (i < so_lopchia - 1)
 			face[idx].vert[1].vertIndex = i + 2;
 		else
 			face[idx].vert[1].vertIndex = 1;
@@ -558,32 +540,32 @@ void  Mesh::CreateNuaVongTron2(float t, float fx, float fHeight) {
 		idx++;
 	}
 
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 
 		face[idx].vert[0].vertIndex = i + 1;
-		if (i < Seg - 1)
+		if (i < so_lopchia - 1)
 			face[idx].vert[1].vertIndex = i + 2;
 		else
 			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + Seg;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + Seg;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
 
 		idx++;
 	}
 
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = Seg + 1;
-		if (i < Seg - 1)
-			face[idx].vert[2].vertIndex = i + 2 + Seg;
+		face[idx].vert[0].vertIndex = so_lopchia + 1;
+		if (i < so_lopchia - 1)
+			face[idx].vert[2].vertIndex = i + 2 + so_lopchia;
 		else
-			face[idx].vert[2].vertIndex = 1 + Seg;
-		face[idx].vert[1].vertIndex = i + 1 + Seg;
+			face[idx].vert[2].vertIndex = 1 + so_lopchia;
+		face[idx].vert[1].vertIndex = i + 1 + so_lopchia;
 		idx++;
 	}
 
@@ -593,43 +575,43 @@ void  Mesh::CreateNuaVongTron2(float t, float fx, float fHeight) {
 
 
 }
-void  Mesh::CreateNuaVongTron(float t, float fx, float fHeight) {
-	int Seg = 32;
-	numVerts = Seg * 2 + 2;
+void  Mesh::CreateNuaVongTron(float t, float fx, float beday) {
+	int so_lopchia = 32;
+	numVerts = so_lopchia * 2 + 2;
 	pt = new Point3[numVerts];
-	float fRadius = t;
+	float bankinh = t;
 	int		i;
 	int		idx;
-	float	fAngle = (PI - 30.0 * PI / 180) / (Seg - 1.0);
+	float	do_quay = (PI - 26.0 * PI / 180) / (so_lopchia - 1.0);
 	float	x, y, z;
 
-	pt[0].set(0, fHeight / 2, 0);
-	for (i = 0; i < Seg; i++)
+	pt[0].set(0, beday / 2, 0);
+	for (i = 0; i < so_lopchia; i++)
 	{
-		x = fRadius * -sin(fAngle * i + 15.0 * PI / 180) - 5.0;
-		z = fRadius * -cos(fAngle * i + 15.0 * PI / 180);
-		y = fHeight / 2;
-		if (i == 0 || i == Seg - 1) {
+		x = bankinh * -sin(do_quay * i + 13.0 * PI / 180) - 5.0;
+		z = bankinh * -cos(do_quay * i + 13.0 * PI / 180);
+		y = beday / 2;
+		if (i == 0 || i == so_lopchia - 1) {
 			x = -5.0;
 			z = 0;
 		}
 		pt[i + 1].set(x, y, z);
 
-		y = -fHeight / 2;
-		pt[i + 1 + Seg].set(x, y, z);
+		y = -beday / 2;
+		pt[i + 1 + so_lopchia].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -fHeight / 2, 0);
+	pt[numVerts - 1].set(0, -beday / 2, 0);
 
-	numFaces = Seg * 3;
+	numFaces = so_lopchia * 3;
 	face = new Face[numFaces];
 
 	idx = 0;
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = 1;
-		if (i < Seg - 1)
+		if (i < so_lopchia - 1)
 
 			face[idx].vert[1].vertIndex = i + 2;
 		else
@@ -638,32 +620,32 @@ void  Mesh::CreateNuaVongTron(float t, float fx, float fHeight) {
 		idx++;
 	}
 
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 
 		face[idx].vert[0].vertIndex = i + 1;
-		if (i < Seg - 1)
+		if (i < so_lopchia - 1)
 			face[idx].vert[1].vertIndex = i + 2;
 		else
 			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + Seg;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + Seg;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
 
 		idx++;
 	}
 
-	for (i = 0; i < Seg; i++)
+	for (i = 0; i < so_lopchia; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = Seg + 1;
-		if (i < Seg - 1)
-			face[idx].vert[2].vertIndex = i + 2 + Seg;
+		face[idx].vert[0].vertIndex = so_lopchia + 1;
+		if (i < so_lopchia - 1)
+			face[idx].vert[2].vertIndex = i + 2 + so_lopchia;
 		else
-			face[idx].vert[2].vertIndex = 1 + Seg;
-		face[idx].vert[1].vertIndex = i + 1 + Seg;
+			face[idx].vert[2].vertIndex = 1 + so_lopchia;
+		face[idx].vert[1].vertIndex = i + 1 + so_lopchia;
 		idx++;
 	}
 
@@ -674,39 +656,39 @@ void  Mesh::CreateNuaVongTron(float t, float fx, float fHeight) {
 
 }
 
-void Mesh::CreateCylinder(int nSegment, float fHeight, float fRadius)
+void Mesh::CreateHinhTru(int nso_lopchiament, float beday, float bankinh)
 {
-	numVerts = nSegment * 2 + 2; // đỉnh ở phía trên + dưới (bao gồm cả tâm)
+	numVerts = nso_lopchiament * 2 + 2; // đỉnh ở phía trên + dưới (bao gồm cả tâm)
 	pt = new Point3[numVerts];
 
 	int		i;
 	int		idx;
-	float	fAngle = 2 * PI / (nSegment - 1);
+	float	do_quay = 2 * PI / (nso_lopchiament - 1);
 	float	x, y, z;
 
-	pt[0].set(0, fHeight / 2, 0);
-	for (i = 0; i < nSegment; i++)
+	pt[0].set(0, beday / 2, 0);
+	for (i = 0; i < nso_lopchiament; i++)
 	{
-		x = fRadius * cos(fAngle * i);
-		z = fRadius * sin(fAngle * i);
-		y = fHeight / 2;
+		x = bankinh * cos(do_quay * i);
+		z = bankinh * sin(do_quay * i);
+		y = beday / 2;
 		pt[i + 1].set(x, y, z);
 
-		y = -fHeight / 2;
-		pt[i + 1 + nSegment].set(x, y, z);
+		y = -beday / 2;
+		pt[i + 1 + nso_lopchiament].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -fHeight / 2, 0);
+	pt[numVerts - 1].set(0, -beday / 2, 0);
 
-	numFaces = nSegment * 3;
+	numFaces = nso_lopchiament * 3;
 	face = new Face[numFaces];
 
 	idx = 0;
-	for (i = 0; i < nSegment; i++)
+	for (i = 0; i < nso_lopchiament; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = 0;
-		if (i < nSegment - 1)
+		if (i < nso_lopchiament - 1)
 			face[idx].vert[1].vertIndex = i + 2;
 		else
 			face[idx].vert[1].vertIndex = 1;
@@ -714,51 +696,51 @@ void Mesh::CreateCylinder(int nSegment, float fHeight, float fRadius)
 		idx++;
 	}
 
-	for (i = 0; i < nSegment; i++)
+	for (i = 0; i < nso_lopchiament; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 
 		face[idx].vert[0].vertIndex = i + 1;
-		if (i < nSegment - 1)
+		if (i < nso_lopchiament - 1)
 			face[idx].vert[1].vertIndex = i + 2;
 		else
 			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + nSegment;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + nSegment;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + nso_lopchiament;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + nso_lopchiament;
 
 		idx++;
 	}
 
-	for (i = 0; i < nSegment; i++)
+	for (i = 0; i < nso_lopchiament; i++)
 	{
 		face[idx].nVerts = 3;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = numVerts - 1;
-		if (i < nSegment - 1)
-			face[idx].vert[2].vertIndex = i + 2 + nSegment;
+		if (i < nso_lopchiament - 1)
+			face[idx].vert[2].vertIndex = i + 2 + nso_lopchiament;
 		else
-			face[idx].vert[2].vertIndex = 1 + nSegment;
-		face[idx].vert[1].vertIndex = i + 1 + nSegment;
+			face[idx].vert[2].vertIndex = 1 + nso_lopchiament;
+		face[idx].vert[1].vertIndex = i + 1 + nso_lopchiament;
 		idx++;
 	}
 
 }
-void Mesh::CreateCube(float	fSize, float t)
+void Mesh::CreateCube(float t)
 {
-	float fRadius = t;
+	float bankinh = t;
 
-	float x = fRadius * sin(0 + 15.0 * PI / 180);
+	float x = bankinh * sin(0 + 15.0 * PI / 180);
 
-	float z = fRadius * cos(0 + 15.0 * PI / 180);
+	float z = bankinh * cos(0 + 15.0 * PI / 180);
 	float dx = x * cos(60 * PI / 180) - z * sin(60 * PI / 180);
 	float dz = x * sin(60 * PI / 180) + z * cos(60 * PI / 180);
 	x = 5 * cos(60 * PI / 180);
 	z = 5 * sin(60 * PI / 180);
 
-	float x2 = fRadius * sin(PI - 15.0 * PI / 180);
+	float x2 = bankinh * sin(PI - 15.0 * PI / 180);
 
-	float z2 = fRadius * cos(PI - 15.0 * PI / 180);
+	float z2 = bankinh * cos(PI - 15.0 * PI / 180);
 
 	float dx2 = x2 * cos(60 * PI / 180) - z2 * sin(60 * PI / 180);
 	float dz2 = x2 * sin(60 * PI / 180) + z2 * cos(60 * PI / 180);
@@ -845,13 +827,13 @@ void Mesh::CreateCube(float	fSize, float t)
 
 }
 
-void Mesh::CreateCube2(float	fSize, float t)
+void Mesh::CreateCube2(float t)
 {
-	float fRadius = t;
+	float bankinh = t;
 
-	float x = fRadius * sin(15.0 * PI / 180);
+	float x = bankinh * sin(15.0 * PI / 180);
 
-	float z = fRadius * cos(15.0 * PI / 180);
+	float z = bankinh * cos(15.0 * PI / 180);
 	float dx = x * cos(60 * PI / 180) - z * sin(60 * PI / 180);
 	float dz = x * sin(60 * PI / 180) + z * cos(60 * PI / 180);
 	x = dx + 5 * cos(60 * PI / 180);
@@ -941,9 +923,9 @@ void Mesh::CreateCube2(float	fSize, float t)
 
 }
 
-void Mesh::CreateCube3(float	fSize, float t)
+void Mesh::CreateCube3(float t)
 {
-	float fRadius = t;
+	float bankinh = t;
 
 
 	float x = 5 * cos(-60 * PI / 180);
@@ -951,9 +933,9 @@ void Mesh::CreateCube3(float	fSize, float t)
 
 
 
-	float x2 = fRadius * sin(0 + 15.0 * PI / 180);
+	float x2 = bankinh * sin(0 + 15.0 * PI / 180);
 
-	float z2 = fRadius * cos(0 + 15.0 * PI / 180);
+	float z2 = bankinh * cos(0 + 15.0 * PI / 180);
 
 	float dx2 = x2 * cos(-60 * PI / 180) - z2 * sin(-60 * PI / 180);
 	float dz2 = x2 * sin(-60 * PI / 180) + z2 * cos(-60 * PI / 180);
@@ -1040,13 +1022,13 @@ void Mesh::CreateCube3(float	fSize, float t)
 
 }
 
-void Mesh::CreateCube4(float	fSize, float t)
+void Mesh::CreateCube4(float t)
 {
-	float fRadius = t;
+	float bankinh = t;
 
-	float x = fRadius * sin(165.0 * PI / 180);
+	float x = bankinh * sin(165.0 * PI / 180);
 
-	float z = fRadius * cos(165.0 * PI / 180);
+	float z = bankinh * cos(165.0 * PI / 180);
 	float dx = x * cos(-60 * PI / 180) - z * sin(-60 * PI / 180);
 	float dz = x * sin(-60 * PI / 180) + z * cos(-60 * PI / 180);
 	x = dx + 5 * cos(-60 * PI / 180);
@@ -1135,12 +1117,12 @@ void Mesh::CreateCube4(float	fSize, float t)
 		face[5].vert[i].colorIndex = 5;
 
 }
-void Mesh::CreateCube5(float	fSize, float t)
+void Mesh::CreateCube5(float t)
 {
-	float fRadius = t;
+	float bankinh = t;
 
-	float x = fRadius * -sin(15.0 * PI / 180) - 5.0;
-	float z = fRadius * -cos(15.0 * PI / 180);
+	float x = bankinh * -sin(15.0 * PI / 180) - 5.0;
+	float z = bankinh * -cos(15.0 * PI / 180);
 
 
 	int i;
@@ -1221,12 +1203,12 @@ void Mesh::CreateCube5(float	fSize, float t)
 		face[5].vert[i].colorIndex = 5;
 
 }
-void Mesh::CreateCube6(float	fSize, float t)
+void Mesh::CreateCube6(float t)
 {
-	float fRadius = t;
+	float bankinh = t;
 
-	float x = fRadius * -sin(165.0 * PI / 180) - 5.0;
-	float z = fRadius * -cos(165.0 * PI / 180);
+	float x = bankinh * -sin(165.0 * PI / 180) - 5.0;
+	float z = bankinh * -cos(165.0 * PI / 180);
 
 
 	int i;
@@ -1308,7 +1290,7 @@ void Mesh::CreateCube6(float	fSize, float t)
 
 
 }
-void Mesh::CreateRectangular(float fLength, float fWidth, float fHeight)
+void Mesh::CreateRectangular(float chieu_dai, float chieu_rong, float beday)
 {
 	numVerts = 8;
 	numFaces = 6;
@@ -1318,13 +1300,13 @@ void Mesh::CreateRectangular(float fLength, float fWidth, float fHeight)
 	int indexColor = 1;
 	{
 		pt[0].set(0, 0, 0); //A
-		pt[1].set(0, 0, fLength); //B
-		pt[2].set(fWidth, 0, fLength); //C
-		pt[3].set(fWidth, 0, 0); //D
-		pt[4].set(0, fHeight, 0); //A'
-		pt[5].set(0, fHeight, fLength); //B
-		pt[6].set(fWidth, fHeight, fLength); //C
-		pt[7].set(fWidth, fHeight, 0); //D
+		pt[1].set(0, 0, chieu_dai); //B
+		pt[2].set(chieu_rong, 0, chieu_dai); //C
+		pt[3].set(chieu_rong, 0, 0); //D
+		pt[4].set(0, beday, 0); //A'
+		pt[5].set(0, beday, chieu_dai); //B
+		pt[6].set(chieu_rong, beday, chieu_dai); //C
+		pt[7].set(chieu_rong, beday, 0); //D
 
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
@@ -1387,812 +1369,22 @@ void Mesh::CreateRectangular(float fLength, float fWidth, float fHeight)
 		idx++;
 	}
 }
-void Mesh::CreateShape1(float fLength, float fWidth, float fHeight)
-{
-	int nSegment = 36;
-	float fRadius = fLength / 4.0;
-	float a = fHeight / 4.0;
-	float b = fHeight * 0.65;
-	int i;
-	int idx = 0;
-	numVerts = 16 + nSegment * 2 + 2;
-	pt = new Point3[numVerts];
-	pt[0].set(-fLength / 2.0, a, fWidth / 2.0);//A
-	pt[1].set(fLength / 2.0, a, fWidth / 2.0);//B
-	pt[2].set(fLength / 2.0, 0, fWidth / 2.0);//C
-	pt[3].set(-fLength / 2.0, 0, fWidth / 2.0);//D
-	pt[4].set(-fLength / 2.0, a, -fWidth / 2.0);//A'
-	pt[5].set(fLength / 2.0, a, -fWidth / 2.0);//B'
-	pt[6].set(fLength / 2.0, 0, -fWidth / 2.0);//C'
-	pt[7].set(-fLength / 2.0, 0, -fWidth / 2.0);//D'
 
-	pt[8].set(-fLength / 4.0, b, fWidth / 2.0);//E
-	pt[9].set(fLength / 4.0, b, fWidth / 2.0);//F
-	pt[10].set(fLength / 4.0, a, fWidth / 2.0);//G
-	pt[11].set(-fLength / 4.0, a, fWidth / 2.0);//H
-	pt[12].set(-fLength / 4.0, b, -fWidth / 2.0);//E'
-	pt[13].set(fLength / 4.0, b, -fWidth / 2.0);//F'
-	pt[14].set(fLength / 4.0, a, -fWidth / 2.0);//G'
-	pt[15].set(-fLength / 4.0, a, -fWidth / 2.0);//H'
-
-	numFaces = 10 + nSegment * 3;
-	face = new Face[numFaces];
-	//khối dưới
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 1;
-	face[idx].vert[2].vertIndex = 2;
-	face[idx].vert[3].vertIndex = 3;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 1;
-	face[idx].vert[2].vertIndex = 5;
-	face[idx].vert[3].vertIndex = 4;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 4;
-	face[idx].vert[1].vertIndex = 5;
-	face[idx].vert[2].vertIndex = 6;
-	face[idx].vert[3].vertIndex = 7;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 2;
-	face[idx].vert[1].vertIndex = 3;
-	face[idx].vert[2].vertIndex = 7;
-	face[idx].vert[3].vertIndex = 6;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 3;
-	face[idx].vert[2].vertIndex = 7;
-	face[idx].vert[3].vertIndex = 4;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 1;
-	face[idx].vert[1].vertIndex = 2;
-	face[idx].vert[2].vertIndex = 6;
-	face[idx].vert[3].vertIndex = 5;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//khối giữa
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 8;
-	face[idx].vert[1].vertIndex = 9;
-	face[idx].vert[2].vertIndex = 10;
-	face[idx].vert[3].vertIndex = 11;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 12;
-	face[idx].vert[1].vertIndex = 13;
-	face[idx].vert[2].vertIndex = 14;
-	face[idx].vert[3].vertIndex = 15;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 8;
-	face[idx].vert[1].vertIndex = 11;
-	face[idx].vert[2].vertIndex = 15;
-	face[idx].vert[3].vertIndex = 12;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 9;
-	face[idx].vert[1].vertIndex = 10;
-	face[idx].vert[2].vertIndex = 14;
-	face[idx].vert[3].vertIndex = 13;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//khối cầu trên
-	float	fAngle = PI / (nSegment - 1);
-	float	x, y, z;
-	int istart = 16;
-	pt[16].set(0, b, fWidth / 2);
-	for (i = 0; i < nSegment; i++) {
-		x = fRadius * cos(fAngle * i);
-		y = fRadius * sin(fAngle * i) + b;
-		z = fWidth / 2;
-		pt[istart + i + 1].set(x, y, z);
-
-		z = -fWidth / 2;
-		pt[istart + i + 1 + nSegment].set(x, y, z);
-	}
-	pt[numVerts - 1].set(0, b, -fWidth / 2);
-
-	for (i = 0; i < nSegment; i++) {
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = istart;
-		if (i < nSegment - 1)
-			face[idx].vert[1].vertIndex = istart + i + 2;
-		else
-			face[idx].vert[1].vertIndex = istart + 1;
-		face[idx].vert[2].vertIndex = istart + i + 1;
-		idx++;
-	}
-
-	for (i = 0; i < nSegment; i++) {
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-
-		face[idx].vert[0].vertIndex = istart + i + 1;
-		if (i < nSegment - 1)
-			face[idx].vert[1].vertIndex = istart + i + 2;
-		else
-			face[idx].vert[1].vertIndex = istart + 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + nSegment;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + nSegment;
-
-		idx++;
-	}
-
-	for (i = 0; i < nSegment; i++) {
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = numVerts - 1;
-		if (i < nSegment - 1)
-			face[idx].vert[2].vertIndex = istart + i + 2 + nSegment;
-		else
-			face[idx].vert[2].vertIndex = istart + 1 + nSegment;
-		face[idx].vert[1].vertIndex = istart + i + 1 + nSegment;
-		idx++;
-	}
-}
-void Mesh::CreateShape2(float fLength, float fWidth, float fHeight)
-{
-	int nSegment = 36;
-	int	idx = 0, idp = 0;
-	float fAngle = PI / nSegment;
-	float x, y, z;
-	float fRadius = fWidth / 2.0;
-	int iStart, iCount;
-	numVerts = 8 + nSegment * 4;
-	numFaces = 4 + 2 * nSegment;
-	face = new Face[numFaces];
-	pt = new Point3[numVerts];
-	//mat duoi
-	{
-		iStart = idp;
-		float iStop;
-		for (int i = 0; i <= nSegment; i++)
-		{
-			x = fRadius * -sin(fAngle * i);
-			z = fRadius * -cos(fAngle * i);
-			y = 0;
-			pt[iStart + i].set(x, y, z); // 17
-			idp++;
-		}
-		iStart = idp;
-		for (int i = 0; i <= nSegment; i++)
-		{
-			x = fRadius * sin(fAngle * i) + fLength;
-			z = fRadius * cos(fAngle * i);
-			y = 0;
-			pt[iStart + i].set(x, y, z); // 17
-			idp++;
-		}
-		pt[idp].set(pt[0].x, pt[0].y, pt[0].z);
-		idp++;
-		iCount = idp;
-		iStart = 0;
-		face[idx].nVerts = iCount;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		for (int i = 0; i < iCount; i++)
-		{
-			face[idx].vert[i].vertIndex = iStart + i;
-		}
-		idx++;
-	}
-	//mat tren
-	{
-		iStart = idp;
-		iCount = 0;
-		float iStop;
-		for (int i = 0; i <= nSegment; i++)
-		{
-			x = fRadius * -sin(fAngle * i);
-			z = fRadius * -cos(fAngle * i);
-			y = fHeight;
-			pt[iStart + i].set(x, y, z); // 17
-			idp++;
-			iCount++;
-		}
-		int iStart2 = idp;
-		for (int i = 0; i <= nSegment; i++)
-		{
-			x = fRadius * sin(fAngle * i) + fLength;
-			z = fRadius * cos(fAngle * i);
-			y = fHeight;
-			pt[iStart2 + i].set(x, y, z); // 17
-			idp++;
-			iCount++;
-		}
-		pt[idp].set(pt[iStart].x, pt[iStart].y, pt[iStart].z);
-		idp++;
-		iCount++;
-		face[idx].nVerts = iCount;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		for (int i = 0; i < iCount; i++)
-		{
-			face[idx].vert[i].vertIndex = iStart + i;
-		}
-		idx++;
-	}
-	//xung quang
-	{
-		iStart = 0;
-		int iStart2 = 2 * nSegment + 3;
-		iCount = 2 * nSegment + 2;
-		for (int i = 0; i < iCount; i++)
-		{
-			face[idx].nVerts = 4;
-			face[idx].vert = new VertexID[face[idx].nVerts];
-			face[idx].vert[0].vertIndex = iStart + i;
-			face[idx].vert[1].vertIndex = iStart2 + i;
-			face[idx].vert[2].vertIndex = iStart2 + i + 1;
-			face[idx].vert[3].vertIndex = iStart + i + 1;
-			idx++;
-		}
-	}
-}
-void Mesh::CreateHalfCylinder1(int nSegment, float fHeight, float fRadius)
-{
-	numVerts = nSegment * 2 + 2;
-	pt = new Point3[numVerts];
-
-	int		i;
-	int		idx;
-	float	fAngle = PI / (nSegment - 1);
-	float	x, y, z;
-
-	pt[0].set(0, fHeight / 2, 0);
-	for (i = 0; i < nSegment; i++)
-	{
-		x = fRadius * -sin(fAngle * i);
-		z = fRadius * -cos(fAngle * i);
-		y = fHeight / 2;
-		pt[i + 1].set(x, y, z);
-
-		y = -fHeight / 2;
-		pt[i + 1 + nSegment].set(x, y, z);
-	}
-	pt[numVerts - 1].set(0, -fHeight / 2, 0);
-
-	numFaces = nSegment * 3;
-	face = new Face[numFaces];
-
-	idx = 0;
-	for (i = 0; i < nSegment; i++)
-	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 0;
-		if (i < nSegment - 1)
-			face[idx].vert[1].vertIndex = i + 2;
-		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = i + 1;
-		idx++;
-	}
-
-	for (i = 0; i < nSegment; i++)
-	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-
-		face[idx].vert[0].vertIndex = i + 1;
-		if (i < nSegment - 1)
-			face[idx].vert[1].vertIndex = i + 2;
-		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + nSegment;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + nSegment;
-
-		idx++;
-	}
-
-	for (i = 0; i < nSegment; i++)
-	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = numVerts - 1;
-		if (i < nSegment - 1)
-			face[idx].vert[2].vertIndex = i + 2 + nSegment;
-		else
-			face[idx].vert[2].vertIndex = 1 + nSegment;
-		face[idx].vert[1].vertIndex = i + 1 + nSegment;
-		idx++;
-	}
+void Mesh::CreateNuavongtron1_3(float t, float fx, float beday) {
+	CreateNuaVongTron3(t, fx, beday);
 
 }
-void Mesh::CreateHalfCylinder2(int nSegment, float fHeight, float fRadius, float length)
-{
-	numVerts = nSegment * 2 + 2;
-	pt = new Point3[numVerts];
-
-	int		i;
-	int		idx;
-	float	fAngle = PI / (nSegment - 1);
-	float	x, y, z;
-
-	pt[0].set(length, fHeight / 2, 0);
-	for (i = 0; i < nSegment; i++)
-	{
-		x = fRadius * sin(fAngle * i) + length;
-		z = fRadius * cos(fAngle * i);
-		y = fHeight / 2;
-		pt[i + 1].set(x, y, z);
-
-		y = -fHeight / 2;
-		pt[i + 1 + nSegment].set(x, y, z);
-	}
-	pt[numVerts - 1].set(length, -fHeight / 2, 0);
-
-	numFaces = nSegment * 3;
-	face = new Face[numFaces];
-
-	idx = 0;
-	for (i = 0; i < nSegment; i++)
-	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 0;
-		face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = i + 1;
-		idx++;
-	}
-	if (i < nSegment - 1)
-		face[idx].vert[1].vertIndex = i + 2;
-	else
-
-		for (i = 0; i < nSegment; i++)
-		{
-			face[idx].nVerts = 4;
-			face[idx].vert = new VertexID[face[idx].nVerts];
-
-			face[idx].vert[0].vertIndex = i + 1;
-			if (i < nSegment - 1)
-				face[idx].vert[1].vertIndex = i + 2;
-			else
-				face[idx].vert[1].vertIndex = 1;
-			face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + nSegment;
-			face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + nSegment;
-
-			idx++;
-		}
-
-	for (i = 0; i < nSegment; i++)
-	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = numVerts - 1;
-		if (i < nSegment - 1)
-			face[idx].vert[2].vertIndex = i + 2 + nSegment;
-		else
-			face[idx].vert[2].vertIndex = 1 + nSegment;
-		face[idx].vert[1].vertIndex = i + 1 + nSegment;
-		idx++;
-	}
+void Mesh::CreateNuavongtron1_1(float t, float fx, float beday) {
+	CreateNuaVongTron(t, fx, beday);
 
 }
-void Mesh::CreateShape3_1(float fLength, float fWidth, float fHeight)
-{
-	float linber = fWidth / 6.0;
-	float fRadius = fWidth / 2.0;
-	float a = fLength / 14.0;
-	float b = (fLength * 10) / 14.0;
-	float phanc = (fLength) / 15.0;
-	int i;
-	int idx = 0;
-	numVerts = 24;
-	pt = new Point3[numVerts];
-	pt[0].set(0, fHeight / 2.0, -fRadius);//A
-	pt[1].set(a, fHeight / 2.0, -fRadius);//B
-	pt[2].set(a, fHeight / 2.0, fRadius);//C
-	pt[3].set(0, fHeight / 2.0, fRadius);//D
-	pt[4].set(0, -fHeight / 2.0, -fRadius);//A'
-	pt[5].set(a, -fHeight / 2.0, -fRadius);//B'
-	pt[6].set(a, -fHeight / 2.0, fRadius);//C'
-	pt[7].set(0, -fHeight / 2.0, fRadius);//D'
-	pt[8].set(b, fHeight / 2.0, -fRadius);//E
-	pt[9].set(fLength, fHeight / 2.0, -fRadius);//F
-	pt[10].set(fLength, fHeight / 2.0, fRadius);//G
-	pt[11].set(b, fHeight / 2.0, fRadius);//H
-	pt[12].set(b, -fHeight / 2.0, -fRadius);//E'd
-	pt[13].set(fLength, -fHeight / 2.0, -fRadius);//F'
-	pt[14].set(fLength, -fHeight / 2.0, fRadius);//G'
-	pt[15].set(b, -fHeight / 2.0, fRadius);//H'
-	pt[16].set(a, fHeight / 2.0, -linber);//K
-	pt[17].set(b, fHeight / 2.0, -linber);//L
-	pt[18].set(b, fHeight / 2.0, linber);//M
-	pt[19].set(a, fHeight / 2.0, linber);//N
-	pt[20].set(a, -fHeight / 2.0, -linber);//K'
-	pt[21].set(b, -fHeight / 2.0, -linber);//L'
-	pt[22].set(b, -fHeight / 2.0, linber);//M'
-	pt[23].set(a, -fHeight / 2.0, linber);//N'
-	numFaces = 14;
-	face = new Face[numFaces];
-	//mặt trên
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 1;
-	face[idx].vert[2].vertIndex = 2;
-	face[idx].vert[3].vertIndex = 3;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
+void Mesh::CreateNuavongtron1_2(float t, float fx, float beday) {
 
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 1;
-	face[idx].vert[1].vertIndex = 8;
-	face[idx].vert[2].vertIndex = 17;
-	face[idx].vert[3].vertIndex = 16;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
 
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 19;
-	face[idx].vert[1].vertIndex = 18;
-	face[idx].vert[2].vertIndex = 11;
-	face[idx].vert[3].vertIndex = 2;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 8;
-	face[idx].vert[1].vertIndex = 9;
-	face[idx].vert[2].vertIndex = 10;
-	face[idx].vert[3].vertIndex = 11;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mặt dưới
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 4;
-	face[idx].vert[1].vertIndex = 5;
-	face[idx].vert[2].vertIndex = 6;
-	face[idx].vert[3].vertIndex = 7;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 5;
-	face[idx].vert[1].vertIndex = 12;
-	face[idx].vert[2].vertIndex = 21;
-	face[idx].vert[3].vertIndex = 20;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 23;
-	face[idx].vert[1].vertIndex = 22;
-	face[idx].vert[2].vertIndex = 15;
-	face[idx].vert[3].vertIndex = 6;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 12;
-	face[idx].vert[1].vertIndex = 13;
-	face[idx].vert[2].vertIndex = 14;
-	face[idx].vert[3].vertIndex = 15;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mặt xung quang
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 9;
-	face[idx].vert[2].vertIndex = 13;
-	face[idx].vert[3].vertIndex = 4;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 3;
-	face[idx].vert[1].vertIndex = 10;
-	face[idx].vert[2].vertIndex = 14;
-	face[idx].vert[3].vertIndex = 7;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mặt trong
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 16;
-	face[idx].vert[1].vertIndex = 17;
-	face[idx].vert[2].vertIndex = 21;
-	face[idx].vert[3].vertIndex = 20;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 18;
-	face[idx].vert[1].vertIndex = 19;
-	face[idx].vert[2].vertIndex = 23;
-	face[idx].vert[3].vertIndex = 22;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 16;
-	face[idx].vert[1].vertIndex = 19;
-	face[idx].vert[2].vertIndex = 23;
-	face[idx].vert[3].vertIndex = 20;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 17;
-	face[idx].vert[1].vertIndex = 18;
-	face[idx].vert[2].vertIndex = 22;
-	face[idx].vert[3].vertIndex = 21;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-}
-void Mesh::CreateNuavongtron1_3(float t, float fx, float fHeight) {
-	CreateNuaVongTron3(t, fx, fHeight);
-
-}
-void Mesh::CreateNuavongtron1_1(float t, float fx, float fHeight) {
-	CreateNuaVongTron(t, fx, fHeight);
+	CreateNuaVongTron2(t, fx, beday);
 
 }
 
-void Mesh::CreateNuavongtron1_2(float t, float fx, float fHeight) {
-
-
-	CreateNuaVongTron2(t, fx, fHeight);
-
-}
-
-void Mesh::CreateShape3_2(float fLength, float fWidth, float fHeight)
-{
-	int nSegment = 32;
-	int	idx = 0, idp = 0;
-	float fAngle = PI / nSegment;
-	float x, y, z;
-	float fRadius = fWidth / 2.0;
-	float phana = (fLength * 4.0) / 15.0;
-	float phanb = (fLength * 9.0) / 15.0;
-	float phanc = (fLength) / 15.0;
-
-	CreateHalfCylinder1(nSegment, fHeight, fRadius);
-}
-void Mesh::CreateShape3_3(float fLength, float fWidth, float fHeight)
-{
-	int nSegment = 32;
-	int	idx = 0, idp = 0;
-	float fAngle = 2 * PI / nSegment;
-	float x, y, z;
-	float fRadius = fWidth / 2.0;
-	float phana = (fLength * 4.0) / 15.0;
-	float phanb = (fLength * 9.0) / 15.0;
-	float phanc = (fLength) / 15.0;
-
-	CreateHalfCylinder2(nSegment, fHeight, fRadius, fLength);
-}
-void Mesh::CreateShape4(float day, float rong, float cao) {
-	int i;
-	int idx = 0;
-	numVerts = 16;
-	pt = new Point3[numVerts];
-	pt[0].set(0, cao, 0);
-	pt[1].set(rong, cao, 0);
-	pt[2].set(rong, cao, day);
-	pt[3].set(0, cao, day);
-	pt[4].set(day, cao - day, day);
-	pt[5].set(day, cao - day, 0);
-	pt[6].set(rong - day, cao - day, 0);
-	pt[7].set(rong - day, cao - day, day);
-	pt[8].set(0, 0, day);
-	pt[9].set(0, 0, 0);
-	pt[10].set(day, 0, 0);
-	pt[11].set(day, 0, day);
-	pt[12].set(rong - day, 0, day);
-	pt[13].set(rong - day, 0, 0);
-	pt[14].set(rong, 0, 0);
-	pt[15].set(rong, 0, day);
-	numFaces = 14;
-	face = new Face[numFaces];
-	//mặt trên
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 1;
-	face[idx].vert[2].vertIndex = 2;
-	face[idx].vert[3].vertIndex = 3;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mặt dưới
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 8;
-	face[idx].vert[1].vertIndex = 9;
-	face[idx].vert[2].vertIndex = 10;
-	face[idx].vert[3].vertIndex = 11;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 12;
-	face[idx].vert[1].vertIndex = 13;
-	face[idx].vert[2].vertIndex = 14;
-	face[idx].vert[3].vertIndex = 15;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mặt chữ u trong
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 4;
-	face[idx].vert[1].vertIndex = 5;
-	face[idx].vert[2].vertIndex = 10;
-	face[idx].vert[3].vertIndex = 11;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 4;
-	face[idx].vert[1].vertIndex = 5;
-	face[idx].vert[2].vertIndex = 6;
-	face[idx].vert[3].vertIndex = 7;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 6;
-	face[idx].vert[1].vertIndex = 7;
-	face[idx].vert[2].vertIndex = 12;
-	face[idx].vert[3].vertIndex = 13;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mat bentrong
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 1;
-	face[idx].vert[2].vertIndex = 6;
-	face[idx].vert[3].vertIndex = 5;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 5;
-	face[idx].vert[2].vertIndex = 10;
-	face[idx].vert[3].vertIndex = 9;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 1;
-	face[idx].vert[1].vertIndex = 6;
-	face[idx].vert[2].vertIndex = 13;
-	face[idx].vert[3].vertIndex = 14;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mat ben ngoai
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 2;
-	face[idx].vert[1].vertIndex = 3;
-	face[idx].vert[2].vertIndex = 4;
-	face[idx].vert[3].vertIndex = 7;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 3;
-	face[idx].vert[1].vertIndex = 4;
-	face[idx].vert[2].vertIndex = 11;
-	face[idx].vert[3].vertIndex = 8;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 2;
-	face[idx].vert[1].vertIndex = 15;
-	face[idx].vert[2].vertIndex = 12;
-	face[idx].vert[3].vertIndex = 7;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 0;
-	idx++;
-	//mặt bên
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 0;
-	face[idx].vert[1].vertIndex = 3;
-	face[idx].vert[2].vertIndex = 8;
-	face[idx].vert[3].vertIndex = 9;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 7;
-	idx++;
-
-	face[idx].nVerts = 4;
-	face[idx].vert = new VertexID[face[idx].nVerts];
-	face[idx].vert[0].vertIndex = 1;
-	face[idx].vert[1].vertIndex = 2;
-	face[idx].vert[2].vertIndex = 15;
-	face[idx].vert[3].vertIndex = 14;
-	for (i = 0; i < face[idx].nVerts; i++)
-		face[idx].vert[i].colorIndex = 7;
-	idx++;
-}
 void Mesh::DrawWireframe()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -2220,20 +1412,6 @@ void Mesh::DrawColor()
 			int iv = face[f].vert[v].vertIndex;
 			int ic = face[f].vert[v].colorIndex;
 			glColor3f(ColorArr[ic][0], ColorArr[ic][1], ColorArr[ic][2]);
-			glVertex3f(pt[iv].x, pt[iv].y, pt[iv].z);
-			glNormal3f(face[f].vtNewell.x, face[f].vtNewell.y, face[f].vtNewell.z);
-		}
-		glEnd();
-	}
-}
-void Mesh::Draw(int chooseColor)
-{
-	for (int f = 0; f < numFaces; f++)
-	{
-		glBegin(GL_POLYGON);
-		for (int v = 0; v < face[f].nVerts; v++)
-		{
-			int		iv = face[f].vert[v].vertIndex;
 			glVertex3f(pt[iv].x, pt[iv].y, pt[iv].z);
 			glNormal3f(face[f].vtNewell.x, face[f].vtNewell.y, face[f].vtNewell.z);
 		}
@@ -2278,14 +1456,10 @@ void Mesh::SetColor(int colorIdx)
 Mesh rectangular;
 Mesh rectangular1;
 Mesh rectangular2;
-Mesh shape1;
-Mesh shape2;
-Mesh shape3_1;
-Mesh shape3_2;
-Mesh shape3_3;
-Mesh shape4;
-Mesh cylinder;
-Mesh banquay;
+Mesh rectangular3;
+Mesh rectangular4;
+
+
 Mesh chot1;
 Mesh chot2;
 Mesh chot3;
@@ -2302,6 +1476,10 @@ Mesh nuavongtrong1_3;
 Mesh nuavongtrongthangiua;
 Mesh nuavongtrongthangiua2;
 Mesh nuavongtrongthangiua3;
+Mesh nuavongtrongthangiua4;
+
+
+
 float* vectorNewell(float iVector[10][3], int n)
 {
 	float vectorResult[] = { 0,0,0 };
@@ -2452,39 +1630,14 @@ void drawNen(float alpha)
 	}
 	glEnable(GL_LIGHTING);
 }
-void DrawDe()
-{
-	glPushMatrix();
-	glTranslatef(-2.5, 0, -7);
-	if (nChoice == 0)
-	{
-		rectangular.DrawWireframe();
-	}
-	else
-	{
-		rectangular.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	rectangular.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void Drawde1()
+void DrawThanhLienKet1()
 {
 	float t = 0.8;
 	glPushMatrix();
 	glTranslatef(0.5 - 2, 0, 0);
-	//(15, 1, 0, 0);
+
 	glRotatef(m, 1, 0, 0);
-	/*float z1 = sqrt(12.5);
-	float z2 = sqrt(12.5) ;
 
-	glTranslatef(0, -z1, 0);
-
-	glTranslatef(0, z1,0);*/
 
 
 
@@ -2495,13 +1648,9 @@ void Drawde1()
 
 	glRotatef(45, 1, 0, 0);
 	glRotatef(180, 1, 0, 0);
-	//glTranslatef(0,z1, z2);
-	//glRotatef(m, 1, 0, 0);
-	//glTranslatef(0, -z1, -z2);
-	//glRotatef(-m, 1, 0, 0);
 
 	glRotatef(-m, 1, 0, 0);
-	//glTranslatef(0, sqrt(12.5), sqrt(12.5));
+
 
 	if (nChoice == 0)
 	{
@@ -2546,233 +1695,403 @@ void Drawde1()
 
 	}
 
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	rectangular1.addMaterial(ambient, diffuse, specular, shininess);
-	nuavongtrongthangiua.addMaterial(ambient, diffuse, specular, shininess);
+
 	glPopMatrix();
 }
-void Drawde2()
+
+void DrawThanhLienKet2()
 {
+	float t = 0.8;
 	glPushMatrix();
-	glTranslatef(-0.5, 16, -7);
+	glTranslatef(0.5 - 2, 0, 0);
+
+	glRotatef(m, 1, 0, 0);
+
+
+
+
+	float h1 = 5 * sin(30 * PI / 180);
+	float h2 = -5 * cos(30 * PI / 180);
+
+	glTranslatef(0, h1, h2);
+
+	glRotatef(45, 1, 0, 0);
+	glRotatef(180, 1, 0, 0);
+
+	glRotatef(-m, 1, 0, 0);
+
+
 	if (nChoice == 0)
 	{
+		glTranslatef(0, 0, t);
+		rectangular1.DrawWireframe();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
 		rectangular2.DrawWireframe();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		chot1.DrawWireframe();
+		nuavongtrongthangiua3.DrawWireframe();
+		nuavongtrongthangiua.DrawWireframe();
+		glTranslatef(5, 0, 0);
+		chot2.DrawWireframe();
+		nuavongtrongthangiua2.DrawWireframe();
+
 	}
 	else
 	{
+		glTranslatef(0, 0, t);
+		rectangular1.DrawColor();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
 		rectangular2.DrawColor();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		nuavongtrongthangiua3.DrawColor();
+		chot1.DrawColor();
+		nuavongtrongthangiua.DrawColor();
+		glTranslatef(5, 0, 0);
+		chot2.DrawColor();
+		nuavongtrongthangiua2.DrawColor();
+
 	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	rectangular2.addMaterial(ambient, diffuse, specular, shininess);
+
+
 	glPopMatrix();
 }
-void DrawTayQuay()
+void DrawThanhLienKet3()
+{
+	float t = 0.8;
+	glPushMatrix();
+	glTranslatef(0.5 - 2, 0, 0);
+
+	glRotatef(m, 1, 0, 0);
+
+
+
+
+	float h1 = -5.0;
+	float h2 = 0;
+
+	glTranslatef(0, h1, h2);
+
+	glRotatef(45, 1, 0, 0);
+	glRotatef(180, 1, 0, 0);
+
+	glRotatef(-m, 1, 0, 0);
+
+
+	if (nChoice == 0)
+	{
+		glTranslatef(0, 0, t);
+		rectangular1.DrawWireframe();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular2.DrawWireframe();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		chot1.DrawWireframe();
+		nuavongtrongthangiua3.DrawWireframe();
+		nuavongtrongthangiua.DrawWireframe();
+		glTranslatef(5, 0, 0);
+		chot2.DrawWireframe();
+		nuavongtrongthangiua2.DrawWireframe();
+
+	}
+	else
+	{
+		glTranslatef(0, 0, t);
+		rectangular1.DrawColor();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular2.DrawColor();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		nuavongtrongthangiua3.DrawColor();
+		chot1.DrawColor();
+		nuavongtrongthangiua.DrawColor();
+		glTranslatef(5, 0, 0);
+		chot2.DrawColor();
+		nuavongtrongthangiua2.DrawColor();
+
+	}
+
+
+	glPopMatrix();
+}
+void DrawThanhLienKet4()
+{
+	float t = 0.8;
+	float u = 6;
+	glPushMatrix();
+	glTranslatef(0.5 - 2 - 2, 0, 0);
+	glTranslatef(0, -sqrt(12.5), -sqrt(12.5));
+	glRotatef(m, 1, 0, 0);
+
+
+
+
+	float h1 = -5.0;
+	float h2 = 0;
+
+	glTranslatef(0, h1, h2);
+
+
+	glRotatef(15, 1, 0, 0);
+
+	glRotatef(-m, 1, 0, 0);
+
+
+	if (nChoice == 0)
+	{
+		glTranslatef(0, 0, t);
+		rectangular3.DrawWireframe();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular4.DrawWireframe();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		chot1.DrawWireframe();
+		nuavongtrongthangiua4.DrawWireframe();
+		nuavongtrongthangiua.DrawWireframe();
+		glTranslatef(u, 0, 0);
+		chot2.DrawWireframe();
+		nuavongtrongthangiua2.DrawWireframe();
+
+	}
+	else
+	{
+		glTranslatef(0, 0, t);
+		rectangular3.DrawColor();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular4.DrawColor();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		nuavongtrongthangiua4.DrawColor();
+		chot1.DrawColor();
+		nuavongtrongthangiua.DrawColor();
+		glTranslatef(u, 0, 0);
+		chot2.DrawColor();
+		nuavongtrongthangiua2.DrawColor();
+
+	}
+
+
+	glPopMatrix();
+}
+
+void DrawThanhLienKet5()
+{
+	float t = 0.8;
+	float u = 6;
+	glPushMatrix();
+	glTranslatef(0.5 - 2 - 2, 0, 0);
+	glTranslatef(0, -sqrt(12.5), -sqrt(12.5));
+	glRotatef(m, 1, 0, 0);
+
+
+
+
+	float h1 = 5 * sin(30 * PI / 180);
+	float h2 = 5 * cos(30 * PI / 180);
+
+	glTranslatef(0, h1, h2);
+
+	glRotatef(15, 1, 0, 0);
+
+
+	glRotatef(-m, 1, 0, 0);
+
+
+	if (nChoice == 0)
+	{
+		glTranslatef(0, 0, t);
+		rectangular3.DrawWireframe();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular4.DrawWireframe();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		chot1.DrawWireframe();
+		nuavongtrongthangiua4.DrawWireframe();
+		nuavongtrongthangiua.DrawWireframe();
+		glTranslatef(u, 0, 0);
+		chot2.DrawWireframe();
+		nuavongtrongthangiua2.DrawWireframe();
+
+	}
+	else
+	{
+		glTranslatef(0, 0, t);
+		rectangular3.DrawColor();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular4.DrawColor();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		nuavongtrongthangiua4.DrawColor();
+		chot1.DrawColor();
+		nuavongtrongthangiua.DrawColor();
+		glTranslatef(u, 0, 0);
+		chot2.DrawColor();
+		nuavongtrongthangiua2.DrawColor();
+
+	}
+
+
+
+	glPopMatrix();
+}
+
+void DrawThanhLienKet6()
+{
+	float t = 0.8;
+	float u = 6;
+	glPushMatrix();
+	glTranslatef(0.5 - 2 - 2, 0, 0);
+	glTranslatef(0, -sqrt(12.5), -sqrt(12.5));
+	glRotatef(m, 1, 0, 0);
+
+
+
+
+	float h1 = 5 * sin(30 * PI / 180);
+	float h2 = -5 * cos(30 * PI / 180);
+
+	glTranslatef(0, h1, h2);
+
+	glRotatef(15, 1, 0, 0);
+
+
+	glRotatef(-m, 1, 0, 0);
+
+
+	if (nChoice == 0)
+	{
+		glTranslatef(0, 0, t);
+		rectangular3.DrawWireframe();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular4.DrawWireframe();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		chot1.DrawWireframe();
+		nuavongtrongthangiua4.DrawWireframe();
+		nuavongtrongthangiua.DrawWireframe();
+		glTranslatef(u, 0, 0);
+		chot2.DrawWireframe();
+		nuavongtrongthangiua2.DrawWireframe();
+
+	}
+	else
+	{
+		glTranslatef(0, 0, t);
+		rectangular3.DrawColor();
+		glTranslatef(0, 0, -t);
+
+
+		glTranslatef(0, 0, -t);
+		rectangular4.DrawColor();
+		glTranslatef(0, 0, t);
+		glTranslatef(0, 0, t / 4);
+		glTranslatef(0.5, 0, 0);
+		glRotatef(90, 0, 0, 1);
+		nuavongtrongthangiua4.DrawColor();
+		chot1.DrawColor();
+		nuavongtrongthangiua.DrawColor();
+		glTranslatef(u, 0, 0);
+		chot2.DrawColor();
+		nuavongtrongthangiua2.DrawColor();
+
+	}
+
+	// He so cua vat the
+
+	glPopMatrix();
+}
+
+
+
+void DrawCanhQuat1()
 {
 	glPushMatrix();
-	glTranslatef(1.8, 7, 0);
+
+	glTranslatef(0, 0, 0);
 	glRotatef(m, 1, 0, 0);
 	glRotatef(90, 0, 0, 1);
-	if (nChoice == 0)
-	{
-		shape2.DrawWireframe();
-	}
-	else
-	{
-		shape2.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	shape2.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawChot1()
-{
-	glPushMatrix();
-	glTranslatef(2.45, 3 + 11.0 * cos(((atan((t * sin(m * PI / 180.0)) / (4.0 + t * cos(m * PI / 180.0)))) * 180) / PI * PI / 180), 11.0 * sin(((atan((t * sin(m * PI / 180.0)) / (4.0 + t *
 
-		(m * PI / 180.0)))) * 180) / PI * PI / 180));
-	glRotatef(90, 0, 0, 1);
-	if (nChoice == 0)
-	{
-		chot1.DrawWireframe();
-	}
-	else
-	{
-		chot1.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	chot1.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawChot2()
-{
-	glPushMatrix();
-	glTranslatef(0, t * cos(m * PI / 180.0), t * sin(m * PI / 180.0));
-	glTranslatef(1.5, 7, 0);
-	glRotatef(90, 0, 0, 1);
 
 	if (nChoice == 0)
 	{
-		chot2.DrawWireframe();
-	}
-	else
-	{
-		chot2.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	chot2.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawChot3()
-{
-	glPushMatrix();
-	glTranslatef(1.4, 3, 0);
-	glRotatef(90, 0, 0, 1);
-	if (nChoice == 0)
-	{
-		chot3.DrawWireframe();
-	}
-	else
-	{
-		chot3.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	chot3.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawCube1() {
-	glPushMatrix();
-	if (nChoice == 0)
-	{
+		nuavongtrong1_3.DrawWireframe();
+		nuavongtrong1_2.DrawWireframe();
+		nuavongtrong1_1.DrawWireframe();
+		glRotatef(-90, 0, 0, 1);
 		cube1.DrawWireframe();
-	}
-	else
-	{
-		cube1.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	cube1.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawCube2() {
-	glPushMatrix();
-
-	if (nChoice == 0)
-	{
 		cube2.DrawWireframe();
+		cube3.DrawWireframe();
+		cube4.DrawWireframe();
+		cube5.DrawWireframe();
+		cube6.DrawWireframe();
+
 	}
 	else
 	{
+		nuavongtrong1_3.DrawColor();
+		nuavongtrong1_2.DrawColor();
+		nuavongtrong1_1.DrawColor();
+		glRotatef(-90, 0, 0, 1);
+		cube1.DrawColor();
 		cube2.DrawColor();
+		cube3.DrawColor();
+		cube4.DrawColor();
+		cube5.DrawColor();
+		cube6.DrawColor();
 	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	cube2.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawThanhchuU() {
-	glPushMatrix();
-	glTranslatef(2.37, 11.6, 1.1 + 11.0 * sin(((atan((t * sin(m * PI / 180.0)) / (4.0 + t * cos(m * PI / 180.0)))) * 180) / PI * PI / 180));
-	glRotatef(90, 0, 1, 0);
-	if (nChoice == 0)
-	{
-		shape4.DrawWireframe();
-	}
-	else
-	{
-		shape4.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	shape4.addMaterial(ambient, diffuse, specular, shininess);
+
+
 	glPopMatrix();
 }
 
 
-
-
-
-
-void DrawBanQuay()
-{
-	glPushMatrix();
-	glTranslatef(0.9, 7, 0);
-	glRotatef(90, 0, 0, 1);
-	if (nChoice == 0)
-	{
-		banquay.DrawWireframe();
-	}
-	else
-	{
-		banquay.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	banquay.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawThanhTruot()
-{
-	glPushMatrix();
-	glTranslatef(2.75, 18, 11.0 * sin(((atan((t * sin(m * PI / 180.0)) / (4.0 + t * cos(m * PI / 180.0)))) * 180) / PI * PI / 180));
-	glRotatef(90, 1, 0, 0);
-	if (nChoice == 0)
-	{
-		cylinder.DrawWireframe();
-	}
-	else
-	{
-		cylinder.DrawColor();
-	}
-
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	cylinder.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-
-
-void DrawThanhLienKet2() {
+void DrawCanhQuat2() {
 
 
 	glPushMatrix();
@@ -2782,7 +2101,6 @@ void DrawThanhLienKet2() {
 
 
 	glRotatef(90, 0, 0, 1);
-	//glRotatef(((atan((t * sin(m * PI / 180.0)) / (4.0 + t * cos(m * PI / 180.0)))) * 180) / PI, 1, 0, 0);
 
 	if (nChoice == 0)
 	{
@@ -2811,14 +2129,8 @@ void DrawThanhLienKet2() {
 		cube5.DrawColor();
 		cube6.DrawColor();
 	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
-	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
-	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
+
+
 	glPopMatrix();
 
 
@@ -2827,12 +2139,15 @@ void DrawThanhLienKet2() {
 }
 
 
-void DrawThanhLienKet()
-{
+void DrawCanhQuat3() {
+
+
 	glPushMatrix();
 
-	glTranslatef(0, 0, 0);
+	glTranslatef(-2 - 2, -sqrt(12.5) + 6.0 * cos(15.0 * PI / 180.0), -sqrt(12.5) + 6.0 * sin(15.0 * PI / 180.0));
 	glRotatef(m, 1, 0, 0);
+
+
 	glRotatef(90, 0, 0, 1);
 	//glRotatef(((atan((t * sin(m * PI / 180.0)) / (4.0 + t * cos(m * PI / 180.0)))) * 180) / PI, 1, 0, 0);
 
@@ -2864,76 +2179,31 @@ void DrawThanhLienKet()
 		cube6.DrawColor();
 	}
 	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
-	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
-	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
+
+
 	glPopMatrix();
+
+
+
+
 }
-void DrawGoido1() {
-	glPushMatrix();
-	glTranslatef(0.5, 18, -6);
-	glRotatef(-90, 0, 0, 1);
-	if (nChoice == 0)
-	{
-		shape1.DrawWireframe();
-	}
-	else
-	{
-		shape1.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	shape1.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
-void DrawGoido2() {
-	glPushMatrix();
-	glTranslatef(0.5, 18, 6);
-	glRotatef(-90, 0, 0, 1);
-	if (nChoice == 0)
-	{
-		shape1.DrawWireframe();
-	}
-	else
-	{
-		shape1.DrawColor();
-	}
-	// He so cua vat the
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 40.0;
-	shape1.addMaterial(ambient, diffuse, specular, shininess);
-	glPopMatrix();
-}
+
 void DrawObject()
 {
 	glColor3f(0, 0, 0);
-	/*Drawde1();
-	DrawDe();
-	Drawde2();
-	DrawTayQuay();
-	DrawChot1();
-	DrawChot2();
-	DrawChot3();
-	DrawCube1();
-	DrawCube2();
-	DrawThanhchuU();
-	DrawThanhTruot();
-	DrawBanQuay();*/
-	//DrawThanhchuU();
-	Drawde1();
-	DrawThanhLienKet();
-	//DrawTayQuay();
-	//DrawThanhLienKet2();
-	//DrawCube1();
+
+	DrawThanhLienKet1();
+
+	DrawThanhLienKet2();
+	DrawThanhLienKet3();
+	DrawThanhLienKet4();
+	DrawThanhLienKet5();
+	DrawThanhLienKet6();
+	DrawCanhQuat1();
+
+	DrawCanhQuat2();
+	DrawCanhQuat3();
+
 
 }
 void myDisplay()
@@ -3015,10 +2285,10 @@ void myInit()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
-	GLfloat lmodel_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat lmodel_ambient[] = { 0.0, 0.0, 0.5, 1.0 };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+	//glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
 	GLfloat light_ambient0[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat light_diffuse0[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -3107,6 +2377,15 @@ void OnKeyboard(unsigned char key, int x, int y)
 {
 	if (key == 'w' || key == 'W')
 	{
+		/*
+		if (nChoice == 0) {
+
+			glEnable(GL_SMOOTH);
+		}
+		else {
+			glDisable(GL_SMOOTH);
+
+		}*/
 		nChoice = (nChoice + 1) % 2;
 	}
 
@@ -3138,7 +2417,7 @@ void OnKeyboard(unsigned char key, int x, int y)
 			camera[1] = cameraState[4];
 			camera[2] = cameraState[5];
 
-			fHalfSize = 7;
+			fHalfSize = 15;
 			lightState = false;
 			myInit();
 		}
@@ -3245,63 +2524,98 @@ int main(int argc, char* argv[])
 	camera[2] = camera_dis * sin(DEGRADIAN * camera_angle);
 	cameraState[6] = 0;
 
-	float sizez = 1.0;
-	cube1.CreateCube(3, sizez);
-	cube1.SetColor(4);
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+
+
+
+	float size_canhquat = 1.1;
+	int mau_canhquat = 4;
+	cube1.CreateCube(size_canhquat);
+	cube1.SetColor(mau_canhquat);
 	cube1.vectorNewell();
-
-	cube2.CreateCube2(3, sizez);
-	cube2.SetColor(4);
+	//cube1.addMaterial(ambient, diffuse, specular, shininess);
+	cube2.CreateCube2(size_canhquat);
+	cube2.SetColor(mau_canhquat);
 	cube2.vectorNewell();
-	cube3.CreateCube3(3, sizez);
-	cube3.SetColor(4);
+	//cube2.addMaterial(ambient, diffuse, specular, shininess);
+	cube3.CreateCube3(size_canhquat);
+	cube3.SetColor(mau_canhquat);
 	cube3.vectorNewell();
-	cube4.CreateCube4(3, sizez);
-	cube4.SetColor(4);
+	//cube3.addMaterial(ambient, diffuse, specular, shininess);
+	cube4.CreateCube4(size_canhquat);
+	cube4.SetColor(mau_canhquat);
 	cube4.vectorNewell();
-	cube5.CreateCube5(3, sizez);
-	cube5.SetColor(4);
+	//cube4.addMaterial(ambient, diffuse, specular, shininess);
+	cube5.CreateCube5(size_canhquat);
+	cube5.SetColor(mau_canhquat);
 	cube5.vectorNewell();
-	cube6.CreateCube6(3, sizez);
-	cube6.SetColor(4);
+	//cube5.addMaterial(ambient, diffuse, specular, shininess);
+	cube6.CreateCube6(size_canhquat);
+	cube6.SetColor(mau_canhquat);
 	cube6.vectorNewell();
-
-	nuavongtrong1_1.CreateNuavongtron1_1(sizez, 2, 1);
-	nuavongtrong1_1.SetColor(5);
+	//cube6.addMaterial(ambient, diffuse, specular, shininess);
+	nuavongtrong1_1.CreateNuavongtron1_1(size_canhquat, 2, 1);
+	nuavongtrong1_1.SetColor(mau_canhquat);
 	nuavongtrong1_1.vectorNewell();
-
-	nuavongtrong1_2.CreateNuavongtron1_2(sizez, 2, 1);
-	nuavongtrong1_2.SetColor(3);
+	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
+	nuavongtrong1_2.CreateNuavongtron1_2(size_canhquat, 2, 1);
+	nuavongtrong1_2.SetColor(mau_canhquat);
 	nuavongtrong1_2.vectorNewell();
-	nuavongtrong1_3.CreateNuavongtron1_3(sizez, 2, 1);
-	nuavongtrong1_3.SetColor(1);
+	nuavongtrong1_2.addMaterial(ambient, diffuse, specular, shininess);
+	nuavongtrong1_3.CreateNuavongtron1_3(size_canhquat, 2, 1);
+	nuavongtrong1_3.SetColor(mau_canhquat);
 	nuavongtrong1_3.vectorNewell();
-	shape4.CreateShape4(0.65, 2.2, 6);
-	shape4.SetColor(10);
-	shape4.vectorNewell();
-	//kết thúc quá trình tạo//
-	rectangular1.CreateRectangular(0.4, 1, 5);
-	rectangular1.SetColor(2);
+	nuavongtrong1_3.addMaterial(ambient, diffuse, specular, shininess);
+	float size_thanhlienket1 = 5.0;
+	float size_thanhlienket2 = 6.0;
+	int mau_thanhlienket = 2;
+	rectangular1.CreateRectangular(0.4, 1, size_thanhlienket1);
+	rectangular1.SetColor(mau_thanhlienket);
 	rectangular1.vectorNewell();
-	rectangular2.CreateRectangular(0.4, 1, 5);
-	rectangular2.SetColor(3);
+	rectangular1.addMaterial(ambient, diffuse, specular, shininess);
+	rectangular2.CreateRectangular(0.4, 1, size_thanhlienket1);
+	rectangular2.SetColor(mau_thanhlienket);
 	rectangular2.vectorNewell();
-
+	rectangular2.addMaterial(ambient, diffuse, specular, shininess);
+	rectangular3.CreateRectangular(0.4, 1, size_thanhlienket2);
+	rectangular3.SetColor(mau_thanhlienket);
+	rectangular3.vectorNewell();
+	rectangular3.addMaterial(ambient, diffuse, specular, shininess);
+	rectangular4.CreateRectangular(0.4, 1, size_thanhlienket2);
+	rectangular4.SetColor(mau_thanhlienket);
+	rectangular4.vectorNewell();
+	rectangular4.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrongthangiua.CreateNuaVongTronThanGiua(0.6, 0.4, 1, 1);
-	nuavongtrongthangiua.SetColor(5);
+	nuavongtrongthangiua.SetColor(mau_thanhlienket);
 	nuavongtrongthangiua.vectorNewell();
+	nuavongtrongthangiua.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrongthangiua2.CreateNuaVongTronThanGiua(0.6, 0.4, 1, -1);
-	nuavongtrongthangiua2.SetColor(5);
+	nuavongtrongthangiua2.SetColor(mau_thanhlienket);
 	nuavongtrongthangiua2.vectorNewell();
-	nuavongtrongthangiua3.CreateNuaVongTronThanGiua2(0.6, 0.4, 1, -1);
-	nuavongtrongthangiua3.SetColor(5);
+	nuavongtrongthangiua2.addMaterial(ambient, diffuse, specular, shininess);
+	nuavongtrongthangiua3.CreateNuaVongTronThanGiua2(0.6, size_thanhlienket1, 1, -1);
+	nuavongtrongthangiua3.SetColor(mau_thanhlienket);
 	nuavongtrongthangiua3.vectorNewell();
-	chot1.CreateCylinder(32, 1, 0.6);
-	chot1.SetColor(3);
+	nuavongtrongthangiua3.addMaterial(ambient, diffuse, specular, shininess);
+	nuavongtrongthangiua4.CreateNuaVongTronThanGiua2(0.6, size_thanhlienket2, 1, -1);
+	nuavongtrongthangiua4.SetColor(mau_thanhlienket);
+	nuavongtrongthangiua4.vectorNewell();
+	nuavongtrongthangiua4.addMaterial(ambient, diffuse, specular, shininess);
+
+	int mau_chot = 1;
+	chot1.CreateHinhTru(32, 1, 0.6);
+	chot1.SetColor(mau_chot);
 	chot1.vectorNewell();
-	chot2.CreateCylinder(32, 1, 0.6);
-	chot2.SetColor(2);
+	chot1.addMaterial(ambient, diffuse, specular, shininess);
+	chot2.CreateHinhTru(32, 1, 0.6);
+	chot2.SetColor(mau_chot);
 	chot2.vectorNewell();
+	chot2.addMaterial(ambient, diffuse, specular, shininess);
+
+
 	glutKeyboardFunc(OnKeyboard);
 	glutSpecialFunc(OnKeySpecial);
 
