@@ -21,12 +21,12 @@ int		nChoice = 1;
 int* arr = new int[2000];
 float t = 1;
 float m = 0;
-float camera_dis = 4.5;
+float camera_dis = 5;
 float camera_height = 1;
 float camera[3];
 float cameraState[7];
 bool lightState = true;
-GLfloat camera_angle = 330;
+GLfloat camera_angle =330;
 GLfloat	fHalfSize = 15;
 GLfloat fConstFS = fHalfSize;
 
@@ -272,7 +272,7 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float beday, float h) {
 		face[idx].vert[1].vertIndex = i + 2;
 
 		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia ;
 
 		idx++;
 	}
@@ -345,10 +345,10 @@ void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float beday, float h) 
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = (so_lopchia - i - 2) + 2;
+		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
 
 		face[idx].vert[2].vertIndex = (so_lopchia - i - 2) + 1;
-		face[idx].vert[3].vertIndex = i + 2 + so_lopchia * 2;;
+		face[idx].vert[3].vertIndex = (so_lopchia - i - 2) + 2;
 		idx++;
 	}
 
@@ -358,44 +358,10 @@ void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float beday, float h) 
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = (3 * so_lopchia - i - 2) + 2;
+		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
 
 		face[idx].vert[2].vertIndex = (3 * so_lopchia - i - 2) + 1;
-		face[idx].vert[3].vertIndex = i + 2 + so_lopchia * 2;
-		idx++;
-	}
-
-
-	for (i = 0; i < so_lopchia - 1; i++)
-	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-
-		face[idx].vert[0].vertIndex = i + 1;
-
-		face[idx].vert[1].vertIndex = i + 2;
-
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
-
-		idx++;
-	}
-
-	for (i = 2 * so_lopchia; i < 3 * so_lopchia - 1; i++)
-	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-
-		face[idx].vert[0].vertIndex = i + 1;
-
-
-
-
-		face[idx].vert[1].vertIndex = i + 2;
-
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
-
+		face[idx].vert[3].vertIndex = (3 * so_lopchia - i - 2) + 2;
 		idx++;
 	}
 
@@ -2238,17 +2204,17 @@ void DrawObject()
 {
 	glColor3f(0, 0, 0);
 
-	/*DrawThanhLienKet1();
-
+	DrawThanhLienKet1();
+	/*
 	DrawThanhLienKet2();
 	DrawThanhLienKet3();
 	DrawThanhLienKet4();
 	DrawThanhLienKet5();
 	DrawThanhLienKet6();*/
-	DrawCanhQuat1();
+	/*DrawCanhQuat1();
 
 	DrawCanhQuat2();
-	DrawCanhQuat3();
+	DrawCanhQuat3();*/
 
 
 }
@@ -2361,10 +2327,6 @@ void updatePosCamera()
 }
 void OnKeySpecial(int key, int x, int y)
 {
-	if (cameraState[6] == 1)
-	{
-		return;
-	}
 	switch (key)
 	{
 	case GLUT_KEY_LEFT:
@@ -2469,7 +2431,7 @@ void OnKeyboard(unsigned char key, int x, int y)
 		}
 		updatePosCamera();
 		glOrtho(-fHalfSize * 2, fHalfSize * 2, -fHalfSize / 2, fHalfSize + fHalfSize / 2, -1000, 1000);
-		
+		myInit();
 	}
 
 	else if (key == '-' && cameraState[6] != 1)
@@ -2486,27 +2448,10 @@ void OnKeyboard(unsigned char key, int x, int y)
 		}
 		updatePosCamera();
 		glOrtho(-fHalfSize * 2, fHalfSize * 2, -fHalfSize / 2, fHalfSize + fHalfSize / 2, -1000, 1000);
-	
+		myInit();
 	}
 
-	else if (key == '3')
-	{
-		if (t >= 0.0 and t < 1.5) {
-			t = t + 0.05;
-		}
-		else {
-			t = 1.5;
-		}
-	}
-	else if (key == '4')
-	{
-		if (t > 0 and t <= 1.5) {
-			t = t - 0.05;
-		}
-		else {
-			t = 0;
-		}
-	}
+	
 	else if (key == '1')
 	{
 		m = m + 2;
