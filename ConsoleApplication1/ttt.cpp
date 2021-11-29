@@ -14,7 +14,7 @@ using namespace std;
 #define DEGRADIAN	(PI / 180.0)
 
 
-float	ColorArr[COLORNUM][3] = { {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0},{1.0, 1.0, 0.0}};
+float	ColorArr[COLORNUM][3] = { {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0},{1.0, 1.0, 0.0},{255.0 / 255.0,128.0 / 255.0,128.0 / 255.0} ,{255.0 / 255.0,0,128.0 / 255.0} };
 int		screenWidth = 1000;
 int		screenHeight = 500;
 int		nChoice = 1;
@@ -240,11 +240,11 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float beday, float h) {
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
+		face[idx].vert[0].vertIndex = i + 2 + so_lopchia * 2;
+		face[idx].vert[1].vertIndex = i + 1 + so_lopchia * 2;
 
-		face[idx].vert[2].vertIndex = i + 2;
-		face[idx].vert[3].vertIndex = i + 1;
+		face[idx].vert[2].vertIndex = i + 1;
+		face[idx].vert[3].vertIndex = i + 2;
 		idx++;
 	}
 
@@ -261,15 +261,15 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float beday, float h) {
 		idx++;
 	}
 
-
+	
 	for (i = 0; i < so_lopchia - 1; i++)
 	{
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 
-		face[idx].vert[0].vertIndex = i + 1;
+		face[idx].vert[0].vertIndex = i + 2;
 
-		face[idx].vert[1].vertIndex = i + 2;
+		face[idx].vert[1].vertIndex = i + 1;
 
 		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
 		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia ;
@@ -282,12 +282,12 @@ void  Mesh::CreateNuaVongTronThanGiua(float t, float fx, float beday, float h) {
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 
-		face[idx].vert[0].vertIndex = i + 1;
+		face[idx].vert[0].vertIndex = i + 2;
 
 
 
 
-		face[idx].vert[1].vertIndex = i + 2;
+		face[idx].vert[1].vertIndex = i + 1;
 
 		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
 		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
@@ -345,10 +345,10 @@ void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float beday, float h) 
 		face[idx].nVerts = 4;
 		face[idx].vert = new VertexID[face[idx].nVerts];
 		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
+		face[idx].vert[1].vertIndex = (so_lopchia - i - 2) + 2;
 
 		face[idx].vert[2].vertIndex = (so_lopchia - i - 2) + 1;
-		face[idx].vert[3].vertIndex = (so_lopchia - i - 2) + 2;
+		face[idx].vert[3].vertIndex = i + 2 + so_lopchia * 2;;
 		idx++;
 	}
 
@@ -372,6 +372,7 @@ void  Mesh::CreateNuaVongTronThanGiua2(float t, float fx, float beday, float h) 
 
 
 }
+
 void  Mesh::CreateNuaVongTron3(float t, float fx, float beday) {
 	int so_lopchia = 32;
 	numVerts = so_lopchia * 2 + 2;
@@ -389,12 +390,12 @@ void  Mesh::CreateNuaVongTron3(float t, float fx, float beday) {
 		z = bankinh * cos(do_quay * i + 13.0 * PI / 180);
 		float dx = x * cos(-60 * PI / 180) - z * sin(-60 * PI / 180);
 		float dz = x * sin(-60 * PI / 180) + z * cos(-60 * PI / 180);
-		x = dx + 4.9 * cos(-60 * PI / 180);
-		z = dz + 4.9 * sin(-60 * PI / 180);
+		x = dx + 4.95 * cos(-60 * PI / 180);
+		z = dz + 4.95 * sin(-60 * PI / 180);
 		y = beday / 2;
 		if (i == 0 || i == so_lopchia - 1) {
-			x = 4.9 * cos(-60 * PI / 180);
-			z = 4.9 * sin(-60 * PI / 180);
+			x = 4.95 * cos(-60 * PI / 180);
+			z = 4.95 * sin(-60 * PI / 180);
 		}
 		pt[i + 1].set(x, y, z);
 
@@ -471,12 +472,12 @@ void  Mesh::CreateNuaVongTron2(float t, float fx, float beday) {
 		z = bankinh * cos(do_quay * i + 13.0 * PI / 180);
 		float dx = x * cos(60 * PI / 180) - z * sin(60 * PI / 180);
 		float dz = x * sin(60 * PI / 180) + z * cos(60 * PI / 180);
-		x = dx + 4.9 * cos(60 * PI / 180);
-		z = dz + 4.9 * sin(60 * PI / 180);
+		x = dx + 4.95 * cos(60 * PI / 180);
+		z = dz + 4.95 * sin(60 * PI / 180);
 		y = beday / 2;
 		if (i == 0 || i == so_lopchia - 1) {
-			x = 4.9 * cos(60 * PI / 180);
-			z = 4.9 * sin(60 * PI / 180);
+			x = 4.95 * cos(60 * PI / 180);
+			z = 4.95 * sin(60 * PI / 180);
 		}
 		pt[i + 1].set(x, y, z);
 
@@ -550,11 +551,11 @@ void  Mesh::CreateNuaVongTron(float t, float fx, float beday) {
 	pt[0].set(0, beday / 2, 0);
 	for (i = 0; i < so_lopchia; i++)
 	{
-		x = bankinh * -sin(do_quay * i + 13.0 * PI / 180) - 4.9;
+		x = bankinh * -sin(do_quay * i + 13.0 * PI / 180) - 4.95;
 		z = bankinh * -cos(do_quay * i + 13.0 * PI / 180);
 		y = beday / 2;
 		if (i == 0 || i == so_lopchia - 1) {
-			x = -5.0;
+			x = -4.95;
 			z = 0;
 		}
 		pt[i + 1].set(x, y, z);
@@ -620,7 +621,7 @@ void  Mesh::CreateNuaVongTron(float t, float fx, float beday) {
 
 void Mesh::CreateHinhTru(int nso_lopchiament, float beday, float bankinh)
 {
-	numVerts = nso_lopchiament * 2 + 2; // đỉnh ở phía trên + dưới (bao gồm cả tâm)
+	numVerts = nso_lopchiament * 2 + 2;
 	pt = new Point3[numVerts];
 
 	int		i;
@@ -688,6 +689,9 @@ void Mesh::CreateHinhTru(int nso_lopchiament, float beday, float bankinh)
 	}
 
 }
+
+
+
 void Mesh::CreateCube(float t)
 {
 	float bankinh = t;
@@ -1373,9 +1377,11 @@ void Mesh::DrawColor()
 		{
 			int iv = face[f].vert[v].vertIndex;
 			int ic = face[f].vert[v].colorIndex;
-			glNormal3f(face[f].vtNewell.x, face[f].vtNewell.y, face[f].vtNewell.z);
+			
 			glColor3f(ColorArr[ic][0], ColorArr[ic][1], ColorArr[ic][2]);
+			glNormal3f(face[f].vtNewell.x, face[f].vtNewell.y, face[f].vtNewell.z);
 			glVertex3f(pt[iv].x, pt[iv].y, pt[iv].z);
+		
 		
 		}
 		glEnd();
@@ -1641,10 +1647,16 @@ void DrawThanhLienKet1()
 		glTranslatef(0, 0, t);
 		rectangular1.DrawColor();
 		glTranslatef(0, 0, -t);
-
-
 		glTranslatef(0, 0, -t);
+		
+		glRotatef(180, 0, 1, 0);
+		glTranslatef(-1, 0, -t/2);
+
 		rectangular2.DrawColor();
+
+		glTranslatef(1, 0, t/2);
+		glRotatef(-180, 0, 1, 0);
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1692,7 +1704,15 @@ void DrawThanhLienKet2()
 
 
 		glTranslatef(0, 0, -t);
+		
+		
+
 		rectangular2.DrawWireframe();
+
+		
+
+
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1760,7 +1780,14 @@ void DrawThanhLienKet3()
 
 
 		glTranslatef(0, 0, -t);
+		
+
+	
+
 		rectangular2.DrawWireframe();
+
+		
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1804,6 +1831,7 @@ void DrawThanhLienKet4()
 	float u = 6;
 	glPushMatrix();
 	glTranslatef(0.5 - 2 - 2, 0, 0);
+
 	glTranslatef(0, -sqrt(12.5), -sqrt(12.5));
 	glRotatef(m, 1, 0, 0);
 
@@ -1815,7 +1843,7 @@ void DrawThanhLienKet4()
 
 	glTranslatef(0, h1, h2);
 
-
+	
 	glRotatef(15, 1, 0, 0);
 
 	glRotatef(-m, 1, 0, 0);
@@ -1826,7 +1854,6 @@ void DrawThanhLienKet4()
 		glTranslatef(0, 0, t);
 		rectangular3.DrawWireframe();
 		glTranslatef(0, 0, -t);
-
 
 		glTranslatef(0, 0, -t);
 		rectangular4.DrawWireframe();
@@ -1850,7 +1877,13 @@ void DrawThanhLienKet4()
 
 
 		glTranslatef(0, 0, -t);
+		glRotatef(180, 0, 1, 0);
+		glTranslatef(-1, 0, -t / 2);
+
 		rectangular4.DrawColor();
+
+		glTranslatef(1, 0, t / 2);
+		glRotatef(-180, 0, 1, 0);
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1878,7 +1911,7 @@ void DrawThanhLienKet5()
 	glRotatef(m, 1, 0, 0);
 
 
-
+	
 
 	float h1 = 5 * sin(30 * PI / 180);
 	float h2 = 5 * cos(30 * PI / 180);
@@ -1899,7 +1932,11 @@ void DrawThanhLienKet5()
 
 
 		glTranslatef(0, 0, -t);
+	
+
 		rectangular4.DrawWireframe();
+
+	
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1920,7 +1957,16 @@ void DrawThanhLienKet5()
 
 
 		glTranslatef(0, 0, -t);
+		
+
+		glRotatef(180, 0, 1, 0);
+		glTranslatef(-1, 0, -t / 2);
+
 		rectangular4.DrawColor();
+
+		glTranslatef(1, 0, t / 2);
+		glRotatef(-180, 0, 1, 0);
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1970,7 +2016,10 @@ void DrawThanhLienKet6()
 
 
 		glTranslatef(0, 0, -t);
+	
+
 		rectangular4.DrawWireframe();
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1991,7 +2040,16 @@ void DrawThanhLienKet6()
 
 
 		glTranslatef(0, 0, -t);
+
+
+		glRotatef(180, 0, 1, 0);
+		glTranslatef(-1, 0, -t / 2);
+
 		rectangular4.DrawColor();
+
+		glTranslatef(1, 0, t / 2);
+		glRotatef(-180, 0, 1, 0);
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -2205,16 +2263,16 @@ void DrawObject()
 	glColor3f(0, 0, 0);
 
 	DrawThanhLienKet1();
-	/*
+	
 	DrawThanhLienKet2();
 	DrawThanhLienKet3();
 	DrawThanhLienKet4();
 	DrawThanhLienKet5();
-	DrawThanhLienKet6();*/
-	/*DrawCanhQuat1();
+	DrawThanhLienKet6();
+	DrawCanhQuat1();
 
 	DrawCanhQuat2();
-	DrawCanhQuat3();*/
+	DrawCanhQuat3();
 
 
 }
@@ -2230,12 +2288,25 @@ void myDisplay()
 	gluLookAt(camera[0], camera[1], camera[2], 0, 0, 0, 0, 1, 0);
 	glViewport(0, 0, screenWidth, screenHeight);
 
+
+
+
+
+	GLfloat light_position0[] = { -30.0, 30.0, -15.0, 0.0 };
+
+
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
+
+	GLfloat light_position1[] = { 30.0, 30.0, -15.0, 0.0 };
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+
+
 	glClearStencil(0);
 	glClearDepth(1.0f);
 
-
+	
 	DrawObject();
-
+	
 	glDisable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
@@ -2250,10 +2321,6 @@ void myDisplay()
 	glStencilFunc(GL_EQUAL, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-	glPushMatrix();
-	glScalef(1, -1, 1);
-	DrawObject();
-	glPopMatrix();
 	glDisable(GL_STENCIL_TEST);
 
 	glEnable(GL_BLEND);
@@ -2291,20 +2358,17 @@ void myInit()
 	GLfloat light_ambient0[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat light_diffuse0[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat light_specular0[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_position0[] = { 10.0, 10.0, 20.0, 0.0 };
-
 	glEnable(GL_LIGHT0);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
+	
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular0);
-
-	/*glEnable(GL_LIGHT1);
+	
+	glEnable(GL_LIGHT1);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse0);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient0);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular0);
-	GLfloat light_position1[] = { 0.0, 0.0, 30.0, 0.0 };
-	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);*/
+	
 
 
 	glOrtho(-fHalfSize * 2, fHalfSize * 2, -fHalfSize / 2, fHalfSize + fHalfSize / 2, -1000, 1000);
@@ -2334,6 +2398,7 @@ void OnKeySpecial(int key, int x, int y)
 		camera_angle++;
 		if (camera_angle > 360) camera_angle = camera_angle - 360.0f;
 		updatePosCamera();
+		myInit();
 		break;
 	}
 	case GLUT_KEY_RIGHT:
@@ -2341,7 +2406,7 @@ void OnKeySpecial(int key, int x, int y)
 		camera_angle--;
 		if (camera_angle < 0) camera_angle = 360.0f;
 		updatePosCamera();
-
+		myInit();
 		break;
 	}
 	case GLUT_KEY_UP:
@@ -2356,7 +2421,7 @@ void OnKeySpecial(int key, int x, int y)
 			fHalfSize += 0.1;
 			camera[1] += 0.1;
 		}
-	
+		myInit();
 		break;
 	}
 
@@ -2372,7 +2437,7 @@ void OnKeySpecial(int key, int x, int y)
 			fHalfSize += 0.1;
 			camera[1] -= 0.1;
 		}
-		
+		myInit();
 		break;
 	}
 	default:
@@ -2511,44 +2576,44 @@ int main(int argc, char* argv[])
 	float size_canhquat = 1.1;
 	
 	cube1.CreateCube(size_canhquat);
-	//cube1.SetColor(mau_canhquat);
+	
 	cube1.vectorNewell();
 	cube1.addMaterial(ambient, diffuse, specular, shininess);
 	cube2.CreateCube2(size_canhquat);
-	//cube2.SetColor(mau_canhquat);
+	
 	cube2.vectorNewell();
 	cube2.addMaterial(ambient, diffuse, specular, shininess);
 	cube3.CreateCube3(size_canhquat);
-	//cube3.SetColor(mau_canhquat);
+	
 	cube3.vectorNewell();
 	cube3.addMaterial(ambient, diffuse, specular, shininess);
 	cube4.CreateCube4(size_canhquat);
-	//cube4.SetColor(mau_canhquat);
+	
 	cube4.vectorNewell();
 	cube4.addMaterial(ambient, diffuse, specular, shininess);
 	cube5.CreateCube5(size_canhquat);
-	//cube5.SetColor(mau_canhquat);
+	
 	cube5.vectorNewell();
 	cube5.addMaterial(ambient, diffuse, specular, shininess);
 	cube6.CreateCube6(size_canhquat);
-	//cube6.SetColor(mau_canhquat);
+	
 	cube6.vectorNewell();
 	cube6.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrong1_1.CreateNuavongtron1_1(size_canhquat, 2, 1);
-	//nuavongtrong1_1.SetColor(mau_canhquat);
+
 	nuavongtrong1_1.vectorNewell();
 	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrong1_2.CreateNuavongtron1_2(size_canhquat, 2, 1);
-	//nuavongtrong1_2.SetColor(mau_canhquat);
+	
 	nuavongtrong1_2.vectorNewell();
 	nuavongtrong1_2.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrong1_3.CreateNuavongtron1_3(size_canhquat, 2, 1);
-	//nuavongtrong1_3.SetColor(mau_canhquat);
+
 	nuavongtrong1_3.vectorNewell();
 	nuavongtrong1_3.addMaterial(ambient, diffuse, specular, shininess);
 	float size_thanhlienket1 = 5.0;
 	float size_thanhlienket2 = 6.0;
-	int mau_thanhlienket = 2;
+	int mau_thanhlienket = 3;
 	rectangular1.CreateRectangular(0.4, 1, size_thanhlienket1);
 	rectangular1.SetColor(mau_thanhlienket);
 	rectangular1.vectorNewell();
@@ -2582,7 +2647,7 @@ int main(int argc, char* argv[])
 	nuavongtrongthangiua4.vectorNewell();
 	nuavongtrongthangiua4.addMaterial(ambient, diffuse, specular, shininess);
 
-	int mau_chot = 1;
+	int mau_chot = 4;
 	chot1.CreateHinhTru(32, 1, 0.6);
 	chot1.SetColor(mau_chot);
 	chot1.vectorNewell();
