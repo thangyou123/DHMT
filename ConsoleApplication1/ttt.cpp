@@ -9,27 +9,24 @@
 
 using namespace std;
 
-#define PI			3.1415926
-#define	COLORNUM		15
-#define DEGRADIAN	(PI / 180.0)
+#define PI			3.14159261
 
 
-float	ColorArr[COLORNUM][3] = { {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0},{1.0, 1.0, 0.0},{255.0 / 255.0,128.0 / 255.0,128.0 / 255.0} ,{255.0 / 255.0,0,128.0 / 255.0} ,{0.2,0.2,0.2} ,{0.0,0.0,1.0} };
+float	ColorArr[7][3] = { {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0},{1.0, 1.0, 0.0},{255.0 / 255.0,128.0 / 255.0,128.0 / 255.0} ,{255.0 / 255.0,0,128.0 / 255.0} ,{0.2,0.2,0.2} ,{0.0,0.0,1.0} };
 int		screenWidth = 1000;
 int		screenHeight = 500;
 int		View_Color = 1;
-int* arr = new int[2000];
+
 float t = 1;
 float m = 0;
-float camera_dis = 5;
-float camera_height = 1;
+float bankinh_camera = 5;
+float chieu_cao_camera = 1;
 float camera[3];
-float cameraState[6];
+float luutrangthai_camera[6];
 bool state2D;
-bool lightState = true;
-GLfloat camera_angle =330;
-GLfloat	fHalfSize = 15;
-GLfloat fConstFS = fHalfSize;
+GLfloat doxoay_camera =330;
+GLfloat	size_vieww = 15;
+GLfloat size_vieww_bandau = size_vieww;
 
 class Point3
 {
@@ -42,11 +39,6 @@ public:
 	void set(Point3& p)
 	{
 		x = p.x; y = p.y; z = p.z;
-	}
-	string printPoint3()
-	{
-		string res = to_string(x) + " ; " + to_string(y) + " ; " + to_string(z);
-		return res;
 	}
 	Point3() { x = y = z = 0; }
 	Point3(float dx, float dy, float dz)
@@ -90,7 +82,11 @@ public:
 	{
 		x = -x; y = -y; z = -z;
 	}
-	void normalize();
+	void chuanhoa() {
+		x = x / sqrt(x * x + y * y + z * z);
+		y = y / sqrt(x * x + y * y + z * z);
+		z = z / sqrt(x * x + y * y + z * z);
+	}
 	Vector3() { x = y = z = 0; }
 	Vector3(float dx, float dy, float dz)
 	{
@@ -103,32 +99,25 @@ public:
 
 };
 
-void Vector3::normalize()
-{
-	float temp = sqrt(x * x + y * y + z * z);
-	x = x / temp;
-	y = y / temp;
-	z = z / temp;
-}
 
 class VertexID
 {
 public:
-	int		vertIndex; //index of this vertex in the vertex list
-	int		normIndex; // index of this vertex's normal
-	int		colorIndex; // index of this vertex's color
+	int		vdx; 
+	int		cdx;
+	int		ndx; 
+	
 };
 
 class Face
 {
 public:
-	int	nVerts;
+	int	n_Vert;
 	VertexID* vert;
-	// danh sách các đỉnh + vector pháp tuyến của đỉnh
-	Vector3 vtNewell;
+	Vector3 vN;
 	Face()
 	{
-		nVerts = 0;
+		n_Vert = 0;
 		vert = NULL;
 	}
 	~Face()
@@ -138,45 +127,44 @@ public:
 			delete[] vert;
 			vert = NULL;
 		}
-		nVerts = 0;
+		n_Vert = 0;
 	}
 };
 
 class Mesh
 {
 public:
-	int	numVerts; //số lượng đỉnh
-	Point3* pt; //  các đỉnh
+	int	num_V; 
+	Point3* pointt; 
 
-	int	numFaces; // số lượng mặt 
-	Face* face; // các mặt
+	int	num_F; 
+	Face* face; 
 
 public:
 	Mesh()
 	{
-		numVerts = 0;
-		pt = NULL;
-		numFaces = 0;
+		num_V = 0;
+		pointt = NULL;
+		num_F = 0;
 		face = NULL;
 	}
 	~Mesh()
 	{
-		if (pt != NULL)
+		if (pointt != NULL)
 		{
-			delete[] pt;
+			delete[] pointt;
 		}
 		if (face != NULL)
 		{
 			delete[] face;
 		}
-		numVerts = 0;
-		numFaces = 0;
+		num_V = 0;
+		num_F = 0;
 	}
 	void DrawWireframe();
-	void Draw(int chooseColor);
 	void DrawColor();
-	void SetColor(int colorIdx);
-	void vectorNewell();
+	void SetColor(int i_color);
+	void v_new();
 	void addMaterial(float ambient[], float diffuse[], float specular[], float shiness);
 	void Createcanhquat(float t);
 	void Createcanhquat2(float t);
@@ -185,206 +173,153 @@ public:
 	void Createcanhquat5(float t);
 	void Createcanhquat6(float t);
 	void CreateHinhTru(int so_lopchia, float beday, float bankinh);
-	void CreateRectangular(float chieu_dai, float chieu_rong, float beday);
+	void CreateMotPhanThanhLienKet(float chieu_dai, float chieu_rong, float beday);
 	void CreateNuaVongTron(float bankinh, float fx, float beday);
 	void CreateNuaVongTron2(float bankinh, float fx, float beday);
 	void CreateNuaVongTron3(float bankinh, float fx, float beday);
 	void CreateNuaVongTronThanGiua(float bankinh, float fx, float beday, float h);
 	void CreateNuaVongTronThanGiua2(float bankinh, float fx, float beday, float h);
-	void CreateNuavongtron1_1(float bankinh, float fx, float beday);
-	void CreateNuavongtron1_2(float bankinh, float fx, float beday);
-	void CreateNuavongtron1_3(float bankinh, float fx, float beday);
-	
-
-	
 
 };
-
 void  Mesh::CreateNuaVongTronThanGiua(float bankinh, float fx, float beday, float h) {
 	int so_lopchia = 32;
-	numVerts = so_lopchia * 4 + 2;
-	pt = new Point3[numVerts];
-
-
+	num_V = so_lopchia * 4 + 2;
+	pointt = new Point3[num_V];
 	int		i;
-	int		idx;
+	int		i_f;
 	float	do_quay = (PI) / (so_lopchia - 1.0);
 	float	x, y, z, x2, z2;
-
-	pt[0].set(0, beday / 2, 0);
-	pt[2 * so_lopchia].set(0, beday / 2, 0);
+	pointt[0].set(0, beday / 2, 0);
+	pointt[2 * so_lopchia].set(0, beday / 2, 0);
 	for (i = 0; i < so_lopchia; i++)
 	{
 		x2 = bankinh * -sin(do_quay * i) * h;
 		z2 = bankinh * -cos(do_quay * i) * h;
-
 		x = (bankinh + fx) * -sin(do_quay * i) * h;
 		z = (bankinh + fx) * -cos(do_quay * i) * h;
 		y = beday / 2;
-
-		pt[i + 1].set(x, y, z);
-		pt[i + 1 + so_lopchia + so_lopchia].set(x2, y, z2);
-
+		pointt[i + 1].set(x, y, z);
+		pointt[i + 1 + so_lopchia + so_lopchia].set(x2, y, z2);
 		y = -beday / 2;
-		pt[i + 1 + so_lopchia].set(x, y, z);
-		pt[i + 1 + so_lopchia + so_lopchia + so_lopchia].set(x2, y, z2);
+		pointt[i + 1 + so_lopchia].set(x, y, z);
+		pointt[i + 1 + so_lopchia + so_lopchia + so_lopchia].set(x2, y, z2);
 
 	}
-
-	pt[numVerts - 1].set(0, -beday / 2, 0);
-
-	numFaces = so_lopchia * 4;
-	face = new Face[numFaces];
-
-	idx = 0;
-
+	pointt[num_V - 1].set(0, -beday / 2, 0);
+	num_F = so_lopchia * 4;
+	face = new Face[num_F];
+	i_f = 0;
 	for (i = 0; i < so_lopchia - 1; i++)
 	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 2 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = i + 1 + so_lopchia * 2;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = i + 2 + so_lopchia * 2;
+		face[i_f].vert[1].vdx = i + 1 + so_lopchia * 2;
 
-		face[idx].vert[2].vertIndex = i + 1;
-		face[idx].vert[3].vertIndex = i + 2;
-		idx++;
+		face[i_f].vert[2].vdx = i + 1;
+		face[i_f].vert[3].vdx = i + 2;
+		i_f++;
 	}
 
 
 	for (i = so_lopchia; i < 2 * so_lopchia - 1; i++)
 	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = i + 1 + so_lopchia * 2;
+		face[i_f].vert[1].vdx = i + 2 + so_lopchia * 2;
 
-		face[idx].vert[2].vertIndex = i + 2;
-		face[idx].vert[3].vertIndex = i + 1;
-		idx++;
+		face[i_f].vert[2].vdx = i + 2;
+		face[i_f].vert[3].vdx = i + 1;
+		i_f++;
 	}
 
 	
 	for (i = 0; i < so_lopchia - 1; i++)
 	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
 
-		face[idx].vert[0].vertIndex = i + 2;
+		face[i_f].vert[0].vdx = i + 2;
 
-		face[idx].vert[1].vertIndex = i + 1;
+		face[i_f].vert[1].vdx = i + 1;
 
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia ;
+		face[i_f].vert[2].vdx = face[i_f].vert[1].vdx + so_lopchia;
+		face[i_f].vert[3].vdx = face[i_f].vert[0].vdx + so_lopchia ;
 
-		idx++;
+		i_f++;
 	}
 
 	for (i = 2 * so_lopchia; i < 3 * so_lopchia - 1; i++)
 	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-
-		face[idx].vert[0].vertIndex = i + 2;
-
-
-
-
-		face[idx].vert[1].vertIndex = i + 1;
-
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
-
-		idx++;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = i + 2;
+		face[i_f].vert[1].vdx = i + 1;
+		face[i_f].vert[2].vdx = face[i_f].vert[1].vdx + so_lopchia;
+		face[i_f].vert[3].vdx = face[i_f].vert[0].vdx + so_lopchia;
+		i_f++;
 	}
-
-
-
-
-
-
-
 }
 void  Mesh::CreateNuaVongTronThanGiua2(float bankinh, float fx, float beday, float h) {
 	int so_lopchia = 32;
-	numVerts = so_lopchia * 4 + 2;
-	pt = new Point3[numVerts];
-
-
+	num_V = so_lopchia * 4 + 2;
+	pointt = new Point3[num_V];
 	int		i;
-	int		idx;
+	int		i_f;
 	float	do_quay = (PI) / (so_lopchia - 1.0);
 	float	x, y, z, x2, z2;
-
-	pt[0].set(0, beday / 2, 0);
-	pt[2 * so_lopchia].set(0, beday / 2, 0);
+	pointt[0].set(0, beday / 2, 0);
+	pointt[2 * so_lopchia].set(0, beday / 2, 0);
 	for (i = 0; i < so_lopchia; i++)
 	{
 		x2 = bankinh * -sin(do_quay * i) * h;
 		z2 = bankinh * -cos(do_quay * i) * h;
-
 		x = (bankinh)*sin(do_quay * i) * h + fx;
 		z = (bankinh)*cos(do_quay * i) * h;
 		y = beday / 2;
-
-		pt[i + 1].set(x, y, z);
-		pt[i + 1 + so_lopchia + so_lopchia].set(x2, y, z2);
-
+		pointt[i + 1].set(x, y, z);
+		pointt[i + 1 + so_lopchia + so_lopchia].set(x2, y, z2);
 		y = -beday / 2;
-		pt[i + 1 + so_lopchia].set(x, y, z);
-		pt[i + 1 + so_lopchia + so_lopchia + so_lopchia].set(x2, y, z2);
+		pointt[i + 1 + so_lopchia].set(x, y, z);
+		pointt[i + 1 + so_lopchia + so_lopchia + so_lopchia].set(x2, y, z2);
 
 	}
-
-	pt[numVerts - 1].set(0, -beday / 2, 0);
-
-	numFaces = so_lopchia * 4;
-	face = new Face[numFaces];
-
-	idx = 0;
-
+	pointt[num_V - 1].set(0, -beday / 2, 0);
+	num_F = so_lopchia * 4;
+	face = new Face[num_F];
+	i_f = 0;
 	for (i = 0; i < so_lopchia - 1; i++)
 	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = (so_lopchia - i - 2) + 2;
-
-		face[idx].vert[2].vertIndex = (so_lopchia - i - 2) + 1;
-		face[idx].vert[3].vertIndex = i + 2 + so_lopchia * 2;;
-		idx++;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = i + 1 + so_lopchia * 2;
+		face[i_f].vert[1].vdx = (so_lopchia - i - 2) + 2;
+		face[i_f].vert[2].vdx = (so_lopchia - i - 2) + 1;
+		face[i_f].vert[3].vdx = i + 2 + so_lopchia * 2;;
+		i_f++;
 	}
-
-
 	for (i = so_lopchia; i < 2 * so_lopchia - 1; i++)
 	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = i + 1 + so_lopchia * 2;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia * 2;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = i + 1 + so_lopchia * 2;
+		face[i_f].vert[1].vdx = i + 2 + so_lopchia * 2;
 
-		face[idx].vert[2].vertIndex = (3 * so_lopchia - i - 2) + 1;
-		face[idx].vert[3].vertIndex = (3 * so_lopchia - i - 2) + 2;
-		idx++;
+		face[i_f].vert[2].vdx = (3 * so_lopchia - i - 2) + 1;
+		face[i_f].vert[3].vdx = (3 * so_lopchia - i - 2) + 2;
+		i_f++;
 	}
-
-
-
-
-
-
-
 }
 void  Mesh::CreateNuaVongTron3(float bankinh, float fx, float beday) {
 	int so_lopchia = 32;
-	numVerts = so_lopchia * 2 + 2;
-	pt = new Point3[numVerts];
-	
+	num_V = so_lopchia * 2 + 2;
+	pointt = new Point3[num_V];
 	int		i;
-	int		idx;
+	int		i_f;
 	float	do_quay = (PI - 26.0 * PI / 180) / (so_lopchia - 1);
 	float	x, y, z;
-
-	pt[0].set(0, beday / 2, 0);
+	pointt[0].set(0, beday / 2, 0);
 	for (i = 0; i < so_lopchia; i++)
 	{
 		x = bankinh * sin(do_quay * i + 13.0 * PI / 180);
@@ -398,74 +333,65 @@ void  Mesh::CreateNuaVongTron3(float bankinh, float fx, float beday) {
 			x = 4.95 * cos(-60 * PI / 180);
 			z = 4.95 * sin(-60 * PI / 180);
 		}
-		pt[i + 1].set(x, y, z);
-
+		pointt[i + 1].set(x, y, z);
 		y = -beday / 2;
-		pt[i + 1 + so_lopchia].set(x, y, z);
+		pointt[i + 1 + so_lopchia].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -beday / 2, 0);
-
-	numFaces = so_lopchia * 3;
-	face = new Face[numFaces];
-
-	idx = 0;
+	pointt[num_V - 1].set(0, -beday / 2, 0);
+	num_F = so_lopchia * 3;
+	face = new Face[num_F];
+	i_f = 0;
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 1;
+		face[i_f].n_Vert = 3;
+		face[i_f].vert = new VertexID[3];
+		face[i_f].vert[0].vdx = 1;
 		if (i < so_lopchia - 1)
-			face[idx].vert[1].vertIndex = i + 1;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = i + 2;
-		idx++;
-	}
-
-	for (i = 0; i < so_lopchia; i++)
-	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-
-		face[idx].vert[0].vertIndex = i + 2;
-		if (i < so_lopchia - 1)
-			face[idx].vert[1].vertIndex = i + 1;
-		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
-
-		idx++;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = i + 2;
+		i_f++;
 	}
 
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = so_lopchia + 1;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[4];
+
+		face[i_f].vert[0].vdx = i + 2;
 		if (i < so_lopchia - 1)
-			face[idx].vert[2].vertIndex = i + 1 + so_lopchia;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[2].vertIndex = 1 + so_lopchia;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia;
-		idx++;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = face[i_f].vert[1].vdx + so_lopchia;
+		face[i_f].vert[3].vdx = face[i_f].vert[0].vdx + so_lopchia;
+
+		i_f++;
 	}
 
-
-
-
-
+	for (i = 0; i < so_lopchia; i++)
+	{
+		face[i_f].n_Vert = 3;
+		face[i_f].vert = new VertexID[3];
+		face[i_f].vert[0].vdx = so_lopchia + 1;
+		if (i < so_lopchia - 1)
+			face[i_f].vert[2].vdx = i + 1 + so_lopchia;
+		else
+			face[i_f].vert[2].vdx = 1 + so_lopchia;
+		face[i_f].vert[1].vdx = i + 2 + so_lopchia;
+		i_f++;
+	}
 }
 void  Mesh::CreateNuaVongTron2(float bankinh, float fx, float beday) {
 	int so_lopchia = 32;
-	numVerts = so_lopchia * 2 + 2;
-	pt = new Point3[numVerts];
+	num_V = so_lopchia * 2 + 2;
+	pointt = new Point3[num_V];
 	int		i;
-	int		idx;
+	int		i_f;
 	float	do_quay = (PI - 26.0 * PI / 180) / (so_lopchia - 1);
 	float	x, y, z;
-
-	pt[0].set(0, beday / 2, 0);
+	pointt[0].set(0, beday / 2, 0);
 	for (i = 0; i < so_lopchia; i++)
 	{
 		x = bankinh * sin(do_quay * i + 13.0 * PI / 180);
@@ -479,75 +405,63 @@ void  Mesh::CreateNuaVongTron2(float bankinh, float fx, float beday) {
 			x = 4.95 * cos(60 * PI / 180);
 			z = 4.95 * sin(60 * PI / 180);
 		}
-		pt[i + 1].set(x, y, z);
-
+		pointt[i + 1].set(x, y, z);
 		y = -beday / 2;
-		pt[i + 1 + so_lopchia].set(x, y, z);
+		pointt[i + 1 + so_lopchia].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -beday / 2, 0);
-
-	numFaces = so_lopchia * 3;
-	face = new Face[numFaces];
-
-	idx = 0;
+	pointt[num_V - 1].set(0, -beday / 2, 0);
+	num_F = so_lopchia * 3;
+	face = new Face[num_F];
+	i_f = 0;
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 1;
+		face[i_f].n_Vert = 3;
+		face[i_f].vert = new VertexID[3];
+		face[i_f].vert[0].vdx = 1;
 		if (i < so_lopchia - 1)
-			face[idx].vert[1].vertIndex = i + 1;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = i + 2;
-		idx++;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = i + 2;
+		i_f++;
 	}
-
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[4];
 
-		face[idx].vert[0].vertIndex = i + 2;
+		face[i_f].vert[0].vdx = i + 2;
 		if (i < so_lopchia - 1)
-			face[idx].vert[1].vertIndex = i + 1;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
-
-		idx++;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = face[i_f].vert[1].vdx + so_lopchia;
+		face[i_f].vert[3].vdx = face[i_f].vert[0].vdx + so_lopchia;
+		i_f++;
 	}
-
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = so_lopchia + 1;
+		face[i_f].n_Vert = 3;
+		face[i_f].vert = new VertexID[3];
+		face[i_f].vert[0].vdx = so_lopchia + 1;
 		if (i < so_lopchia - 1)
-			face[idx].vert[2].vertIndex = i + 1 + so_lopchia;
+			face[i_f].vert[2].vdx = i + 1 + so_lopchia;
 		else
-			face[idx].vert[2].vertIndex = 1 + so_lopchia;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia;
-		idx++;
+			face[i_f].vert[2].vdx = 1 + so_lopchia;
+		face[i_f].vert[1].vdx = i + 2 + so_lopchia;
+		i_f++;
 	}
-
-
-
-
-
-
 }
 void  Mesh::CreateNuaVongTron(float bankinh, float fx, float beday) {
 	int so_lopchia = 32;
-	numVerts = so_lopchia * 2 + 2;
-	pt = new Point3[numVerts];
+	num_V = so_lopchia * 2 + 2;
+	pointt = new Point3[num_V];
 	int		i;
-	int		idx;
+	int		i_f;
 	float	do_quay = (PI - 26.0 * PI / 180) / (so_lopchia - 1.0);
 	float	x, y, z;
 
-	pt[0].set(0, beday / 2, 0);
+	pointt[0].set(0, beday / 2, 0);
 	for (i = 0; i < so_lopchia; i++)
 	{
 		x = bankinh * -sin(do_quay * i + 13.0 * PI / 180) - 4.95;
@@ -557,134 +471,124 @@ void  Mesh::CreateNuaVongTron(float bankinh, float fx, float beday) {
 			x = -4.95;
 			z = 0;
 		}
-		pt[i + 1].set(x, y, z);
+		pointt[i + 1].set(x, y, z);
 
 		y = -beday / 2;
-		pt[i + 1 + so_lopchia].set(x, y, z);
+		pointt[i + 1 + so_lopchia].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -beday / 2, 0);
+	pointt[num_V - 1].set(0, -beday / 2, 0);
 
-	numFaces = so_lopchia * 3;
-	face = new Face[numFaces];
+	num_F = so_lopchia * 3;
+	face = new Face[num_F];
 
-	idx = 0;
+	i_f = 0;
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 1;
+		face[i_f].n_Vert = 3;
+		face[i_f].vert = new VertexID[3];
+		face[i_f].vert[0].vdx = 1;
 		if (i < so_lopchia - 1)
 
-			face[idx].vert[1].vertIndex = i + 1;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = i + 2;
-		idx++;
-	}
-
-	for (i = 0; i < so_lopchia; i++)
-	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-
-		face[idx].vert[0].vertIndex = i + 2;
-		if (i < so_lopchia - 1)
-			face[idx].vert[1].vertIndex = i + 1;
-		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
-
-		idx++;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = i + 2;
+		i_f++;
 	}
 
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = so_lopchia + 1;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[4];
+
+		face[i_f].vert[0].vdx = i + 2;
 		if (i < so_lopchia - 1)
-			face[idx].vert[2].vertIndex = i + 1 + so_lopchia;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[2].vertIndex = 1 + so_lopchia;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia;
-		idx++;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = face[i_f].vert[1].vdx + so_lopchia;
+		face[i_f].vert[3].vdx = face[i_f].vert[0].vdx + so_lopchia;
+
+		i_f++;
 	}
 
-
-
-
-
-
+	for (i = 0; i < so_lopchia; i++)
+	{
+		face[i_f].n_Vert = 3;
+		face[i_f].vert = new VertexID[3];
+		face[i_f].vert[0].vdx = so_lopchia + 1;
+		if (i < so_lopchia - 1)
+			face[i_f].vert[2].vdx = i + 1 + so_lopchia;
+		else
+			face[i_f].vert[2].vdx = 1 + so_lopchia;
+		face[i_f].vert[1].vdx = i + 2 + so_lopchia;
+		i_f++;
+	}
 }
-void  Mesh::CreateHinhTru(int so_lopchia, float beday, float bankinh) {
-	
-	numVerts = so_lopchia * 2 + 2;
-	pt = new Point3[numVerts];
-	numFaces = so_lopchia * 3;
-	face = new Face[numFaces];
+void  Mesh::CreateHinhTru(int so_lopchia, float beday, float bankinh) {	
+	num_V = so_lopchia * 2 + 2;
+	pointt = new Point3[num_V];
+	num_F = so_lopchia * 3;
+	face = new Face[num_F];
 	int		i;
-	int		idx,matday=3,matben=4;
+	int		i_f,matday=3,matben=4;
 	float	do_quay = (2*PI ) / (so_lopchia - 1.0);
 	float	x, y, z;
-
-	pt[0].set(0, beday / 2, 0);
+	pointt[0].set(0, beday / 2, 0);
 	for (i = 0; i < so_lopchia; i++)
 	{
 		x = bankinh * -sin(do_quay * i );
 		z = bankinh * -cos(do_quay * i );
 		y = beday / 2	;
 	
-		pt[i + 1].set(x, y, z);
+		pointt[i + 1].set(x, y, z);
 
 		y = -beday / 2;
-		pt[i + 1 + so_lopchia].set(x, y, z);
+		pointt[i + 1 + so_lopchia].set(x, y, z);
 	}
-	pt[numVerts - 1].set(0, -beday / 2, 0);
-
-
-	idx = 0;
+	pointt[num_V - 1].set(0, -beday / 2, 0);
+	i_f = 0;
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = matday;
-		face[idx].vert = new VertexID[matday];
-		face[idx].vert[0].vertIndex = 1;
+		face[i_f].n_Vert = matday;
+		face[i_f].vert = new VertexID[matday];
+		face[i_f].vert[0].vdx = 1;
 		if (i < so_lopchia - 1)
 
-			face[idx].vert[1].vertIndex = i + 1;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = i + 2;
-		idx++;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = i + 2;
+		i_f++;
 	}
 
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = matben;
-		face[idx].vert = new VertexID[matben];
+		face[i_f].n_Vert = matben;
+		face[i_f].vert = new VertexID[matben];
 
-		face[idx].vert[0].vertIndex = i + 2;
+		face[i_f].vert[0].vdx = i + 2;
 		if (i < so_lopchia - 1)
-			face[idx].vert[1].vertIndex = i + 1;
+			face[i_f].vert[1].vdx = i + 1;
 		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + so_lopchia;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + so_lopchia;
+			face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = face[i_f].vert[1].vdx + so_lopchia;
+		face[i_f].vert[3].vdx = face[i_f].vert[0].vdx + so_lopchia;
 
-		idx++;
+		i_f++;
 	}
 
 	for (i = 0; i < so_lopchia; i++)
 	{
-		face[idx].nVerts = matday;
-		face[idx].vert = new VertexID[matday];
-		face[idx].vert[0].vertIndex = so_lopchia + 1;
+		face[i_f].n_Vert = matday;
+		face[i_f].vert = new VertexID[matday];
+		face[i_f].vert[0].vdx = so_lopchia + 1;
 		if (i < so_lopchia - 1)
-			face[idx].vert[2].vertIndex = i + 1 + so_lopchia;
+			face[i_f].vert[2].vdx = i + 1 + so_lopchia;
 		else
-			face[idx].vert[2].vertIndex = 1 + so_lopchia;
-		face[idx].vert[1].vertIndex = i + 2 + so_lopchia;
-		idx++;
+			face[i_f].vert[2].vdx = 1 + so_lopchia;
+		face[i_f].vert[1].vdx = i + 2 + so_lopchia;
+		i_f++;
 	}
 
 }
@@ -708,84 +612,73 @@ void Mesh::Createcanhquat(float t)
 	float dz2 = x2 * sin(60 * PI / 180) + z2 * cos(60 * PI / 180);
 	x2 = dx2 + 5 * cos(60 * PI / 180);
 	z2 = dz2 + 5 * sin(60 * PI / 180);
-
-
 	int i;
+	num_V = 8;
+	pointt = new Point3[num_V];
+	pointt[0].set(-0.5, x2, z2);
+	pointt[1].set(0.5, x2, z2);
+	pointt[2].set(0.5, 2, 0);
+	pointt[3].set(-0.5, 2, 0);
+	pointt[4].set(-0.5, x, z);
+	pointt[5].set(0.5, x, z);
+	pointt[6].set(0.5, 0, 0);
+	pointt[7].set(-0.5, 0, 0);
+	num_F = 6;
+	face = new Face[num_F];
 
-	numVerts = 8;
-	pt = new Point3[numVerts];
-	pt[0].set(-0.5, x2, z2);
-	pt[1].set(0.5, x2, z2);
-	pt[2].set(0.5, 2, 0);
-	pt[3].set(-0.5, 2, 0);
-	pt[4].set(-0.5, x, z);
-	pt[5].set(0.5, x, z);
-	pt[6].set(0.5, 0, 0);
-	pt[7].set(-0.5, 0, 0);
+	face[0].n_Vert = 4;
+	face[0].vert = new VertexID[4];
+	face[0].vert[0].vdx = 1;
+	face[0].vert[1].vdx = 5;
+	face[0].vert[2].vdx = 6;
+	face[0].vert[3].vdx = 2;
+	for (i = 0; i < face[0].n_Vert; i++)
+		face[0].vert[i].cdx = 0;
 
+	face[1].n_Vert = 4;
+	face[1].vert = new VertexID[4];
+	face[1].vert[0].vdx = 0;
+	face[1].vert[1].vdx = 3;
+	face[1].vert[2].vdx = 7;
+	face[1].vert[3].vdx = 4;
+	for (i = 0; i < face[1].n_Vert; i++)
+		face[1].vert[i].cdx = 1;
 
-	numFaces = 6;
-	face = new Face[numFaces];
+	face[2].n_Vert = 4;
+	face[2].vert = new VertexID[4];
+	face[2].vert[0].vdx = 0;
+	face[2].vert[1].vdx = 1;
+	face[2].vert[2].vdx = 2;
+	face[2].vert[3].vdx = 3;
+	for (i = 0; i < face[2].n_Vert; i++)
+		face[2].vert[i].cdx = 2;
 
-	//Left face
-	face[0].nVerts = 4;
-	face[0].vert = new VertexID[face[0].nVerts];
-	face[0].vert[0].vertIndex = 1;
-	face[0].vert[1].vertIndex = 5;
-	face[0].vert[2].vertIndex = 6;
-	face[0].vert[3].vertIndex = 2;
-	for (i = 0; i < face[0].nVerts; i++)
-		face[0].vert[i].colorIndex = 0;
+	face[3].n_Vert = 4;
+	face[3].vert = new VertexID[4];
+	face[3].vert[0].vdx = 7;
+	face[3].vert[1].vdx = 6;
+	face[3].vert[2].vdx = 5;
+	face[3].vert[3].vdx = 4;
+	for (i = 0; i < face[3].n_Vert; i++)
+		face[3].vert[i].cdx = 3;
 
-	//Right face
-	face[1].nVerts = 4;
-	face[1].vert = new VertexID[face[1].nVerts];
-	face[1].vert[0].vertIndex = 0;
-	face[1].vert[1].vertIndex = 3;
-	face[1].vert[2].vertIndex = 7;
-	face[1].vert[3].vertIndex = 4;
-	for (i = 0; i < face[1].nVerts; i++)
-		face[1].vert[i].colorIndex = 1;
+	face[4].n_Vert = 4;
+	face[4].vert = new VertexID[4];
+	face[4].vert[0].vdx = 4;
+	face[4].vert[1].vdx = 5;
+	face[4].vert[2].vdx = 1;
+	face[4].vert[3].vdx = 0;
+	for (i = 0; i < face[4].n_Vert; i++)
+		face[4].vert[i].cdx = 4;
 
-	//top face
-	face[2].nVerts = 4;
-	face[2].vert = new VertexID[face[2].nVerts];
-	face[2].vert[0].vertIndex = 0;
-	face[2].vert[1].vertIndex = 1;
-	face[2].vert[2].vertIndex = 2;
-	face[2].vert[3].vertIndex = 3;
-	for (i = 0; i < face[2].nVerts; i++)
-		face[2].vert[i].colorIndex = 2;
-
-	//bottom face
-	face[3].nVerts = 4;
-	face[3].vert = new VertexID[face[3].nVerts];
-	face[3].vert[0].vertIndex = 7;
-	face[3].vert[1].vertIndex = 6;
-	face[3].vert[2].vertIndex = 5;
-	face[3].vert[3].vertIndex = 4;
-	for (i = 0; i < face[3].nVerts; i++)
-		face[3].vert[i].colorIndex = 3;
-
-	//near face
-	face[4].nVerts = 4;
-	face[4].vert = new VertexID[face[4].nVerts];
-	face[4].vert[0].vertIndex = 4;
-	face[4].vert[1].vertIndex = 5;
-	face[4].vert[2].vertIndex = 1;
-	face[4].vert[3].vertIndex = 0;
-	for (i = 0; i < face[4].nVerts; i++)
-		face[4].vert[i].colorIndex = 4;
-
-	//Far face
-	face[5].nVerts = 4;
-	face[5].vert = new VertexID[face[5].nVerts];
-	face[5].vert[0].vertIndex = 3;
-	face[5].vert[1].vertIndex = 2;
-	face[5].vert[2].vertIndex = 6;
-	face[5].vert[3].vertIndex = 7;
-	for (i = 0; i < face[5].nVerts; i++)
-		face[5].vert[i].colorIndex = 5;
+	face[5].n_Vert = 4;
+	face[5].vert = new VertexID[4];
+	face[5].vert[0].vdx = 3;
+	face[5].vert[1].vdx = 2;
+	face[5].vert[2].vdx = 6;
+	face[5].vert[3].vdx = 7;
+	for (i = 0; i < face[5].n_Vert; i++)
+		face[5].vert[i].cdx = 5;
 
 }
 void Mesh::Createcanhquat2(float t)
@@ -800,185 +693,156 @@ void Mesh::Createcanhquat2(float t)
 	x = dx + 5 * cos(60 * PI / 180);
 	z = -dx + 5 * sin(60 * PI / 180);
 
-
 	float	x2 = 5 * cos(60 * PI / 180);
 	float z2 = 5 * sin(60 * PI / 180);
-
-
 	int i;
+	num_V = 8;
+	pointt = new Point3[num_V];
+	pointt[0].set(-0.5, x2, z2);
+	pointt[1].set(0.5, x2, z2);
+	pointt[2].set(0.5, 0, 0);
+	pointt[3].set(-0.5, 0, 0);
+	pointt[4].set(-0.5, x, z);
+	pointt[5].set(0.5, x, z);
+	pointt[6].set(0.5, -1, sqrt(3));
+	pointt[7].set(-0.5, -1, sqrt(3));
 
-	numVerts = 8;
-	pt = new Point3[numVerts];
-	pt[0].set(-0.5, x2, z2);
-	pt[1].set(0.5, x2, z2);
-	pt[2].set(0.5, 0, 0);
-	pt[3].set(-0.5, 0, 0);
-	pt[4].set(-0.5, x, z);
-	pt[5].set(0.5, x, z);
-	pt[6].set(0.5, -1, sqrt(3));
-	pt[7].set(-0.5, -1, sqrt(3));
 
+	num_F = 6;
+	face = new Face[num_F];
 
-	numFaces = 6;
-	face = new Face[numFaces];
+	
+	face[0].n_Vert = 4;
+	face[0].vert = new VertexID[4];
+	face[0].vert[0].vdx = 1;
+	face[0].vert[1].vdx = 5;
+	face[0].vert[2].vdx = 6;
+	face[0].vert[3].vdx = 2;
+	for (i = 0; i < face[0].n_Vert; i++)
+		face[0].vert[i].cdx = 0;
 
-	//Left face
-	face[0].nVerts = 4;
-	face[0].vert = new VertexID[face[0].nVerts];
-	face[0].vert[0].vertIndex = 1;
-	face[0].vert[1].vertIndex = 5;
-	face[0].vert[2].vertIndex = 6;
-	face[0].vert[3].vertIndex = 2;
-	for (i = 0; i < face[0].nVerts; i++)
-		face[0].vert[i].colorIndex = 0;
+	face[1].n_Vert = 4;
+	face[1].vert = new VertexID[4];
+	face[1].vert[0].vdx = 0;
+	face[1].vert[1].vdx = 3;
+	face[1].vert[2].vdx = 7;
+	face[1].vert[3].vdx = 4;
+	for (i = 0; i < face[1].n_Vert; i++)
+		face[1].vert[i].cdx = 1;
 
-	//Right face
-	face[1].nVerts = 4;
-	face[1].vert = new VertexID[face[1].nVerts];
-	face[1].vert[0].vertIndex = 0;
-	face[1].vert[1].vertIndex = 3;
-	face[1].vert[2].vertIndex = 7;
-	face[1].vert[3].vertIndex = 4;
-	for (i = 0; i < face[1].nVerts; i++)
-		face[1].vert[i].colorIndex = 1;
+	face[2].n_Vert = 4;
+	face[2].vert = new VertexID[4];
+	face[2].vert[0].vdx = 0;
+	face[2].vert[1].vdx = 1;
+	face[2].vert[2].vdx = 2;
+	face[2].vert[3].vdx = 3;
+	for (i = 0; i < face[2].n_Vert; i++)
+		face[2].vert[i].cdx = 2;
 
-	//top face
-	face[2].nVerts = 4;
-	face[2].vert = new VertexID[face[2].nVerts];
-	face[2].vert[0].vertIndex = 0;
-	face[2].vert[1].vertIndex = 1;
-	face[2].vert[2].vertIndex = 2;
-	face[2].vert[3].vertIndex = 3;
-	for (i = 0; i < face[2].nVerts; i++)
-		face[2].vert[i].colorIndex = 2;
+	face[3].n_Vert = 4;
+	face[3].vert = new VertexID[4];
+	face[3].vert[0].vdx = 7;
+	face[3].vert[1].vdx = 6;
+	face[3].vert[2].vdx = 5;
+	face[3].vert[3].vdx = 4;
+	for (i = 0; i < face[3].n_Vert; i++)
+		face[3].vert[i].cdx = 3;
 
-	//bottom face
-	face[3].nVerts = 4;
-	face[3].vert = new VertexID[face[3].nVerts];
-	face[3].vert[0].vertIndex = 7;
-	face[3].vert[1].vertIndex = 6;
-	face[3].vert[2].vertIndex = 5;
-	face[3].vert[3].vertIndex = 4;
-	for (i = 0; i < face[3].nVerts; i++)
-		face[3].vert[i].colorIndex = 3;
+	face[4].n_Vert = 4;
+	face[4].vert = new VertexID[4];
+	face[4].vert[0].vdx = 4;
+	face[4].vert[1].vdx = 5;
+	face[4].vert[2].vdx = 1;
+	face[4].vert[3].vdx = 0;
+	for (i = 0; i < face[4].n_Vert; i++)
+		face[4].vert[i].cdx = 4;
 
-	//near face
-	face[4].nVerts = 4;
-	face[4].vert = new VertexID[face[4].nVerts];
-	face[4].vert[0].vertIndex = 4;
-	face[4].vert[1].vertIndex = 5;
-	face[4].vert[2].vertIndex = 1;
-	face[4].vert[3].vertIndex = 0;
-	for (i = 0; i < face[4].nVerts; i++)
-		face[4].vert[i].colorIndex = 4;
-
-	//Far face
-	face[5].nVerts = 4;
-	face[5].vert = new VertexID[face[5].nVerts];
-	face[5].vert[0].vertIndex = 3;
-	face[5].vert[1].vertIndex = 2;
-	face[5].vert[2].vertIndex = 6;
-	face[5].vert[3].vertIndex = 7;
-	for (i = 0; i < face[5].nVerts; i++)
-		face[5].vert[i].colorIndex = 5;
+	face[5].n_Vert = 4;
+	face[5].vert = new VertexID[4];
+	face[5].vert[0].vdx = 3;
+	face[5].vert[1].vdx = 2;
+	face[5].vert[2].vdx = 6;
+	face[5].vert[3].vdx = 7;
+	for (i = 0; i < face[5].n_Vert; i++)
+		face[5].vert[i].cdx = 5;
 
 }
 void Mesh::Createcanhquat3(float t)
 {
 	float bankinh = t;
-
-
 	float x = 5 * cos(-60 * PI / 180);
 	float z = 5 * sin(-60 * PI / 180);
-
-
-
 	float x2 = bankinh * sin(0 + 15.0 * PI / 180);
-
 	float z2 = bankinh * cos(0 + 15.0 * PI / 180);
-
 	float dx2 = x2 * cos(-60 * PI / 180) - z2 * sin(-60 * PI / 180);
 	float dz2 = x2 * sin(-60 * PI / 180) + z2 * cos(-60 * PI / 180);
-
 	x2 = dx2 + 5 * cos(-60 * PI / 180);
 	z2 = dz2 + 5 * sin(-60 * PI / 180);
-
 	int i;
+	num_V = 8;
+	pointt = new Point3[num_V];
+	pointt[0].set(-0.5, x, z);
+	pointt[1].set(0.5, x, z);
+	pointt[2].set(0.5, 0, 0);
+	pointt[3].set(-0.5, 0, 0);
+	pointt[4].set(-0.5, x2, z2);
+	pointt[5].set(0.5, x2, z2);
+	pointt[6].set(0.5, 2, 0);
+	pointt[7].set(-0.5, 2, 0);
+	num_F = 6;
+	face = new Face[num_F];
+	face[0].n_Vert = 4;
+	face[0].vert = new VertexID[4];
+	face[0].vert[0].vdx = 1;
+	face[0].vert[1].vdx = 5;
+	face[0].vert[2].vdx = 6;
+	face[0].vert[3].vdx = 2;
+	for (i = 0; i < face[0].n_Vert; i++)
+		face[0].vert[i].cdx = 0;
+	face[1].n_Vert = 4;
+	face[1].vert = new VertexID[4];
+	face[1].vert[0].vdx = 4;
+	face[1].vert[1].vdx = 0;
+	face[1].vert[2].vdx = 3;
+	face[1].vert[3].vdx = 7;
+	for (i = 0; i < face[1].n_Vert; i++)
+		face[1].vert[i].cdx = 1;
 
-	numVerts = 8;
-	pt = new Point3[numVerts];
-	pt[0].set(-0.5, x, z);
-	pt[1].set(0.5, x, z);
-	pt[2].set(0.5, 0, 0);
-	pt[3].set(-0.5, 0, 0);
-	pt[4].set(-0.5, x2, z2);
-	pt[5].set(0.5, x2, z2);
-	pt[6].set(0.5, 2, 0);
-	pt[7].set(-0.5, 2, 0);
+	face[2].n_Vert = 4;
+	face[2].vert = new VertexID[4];
+	face[2].vert[0].vdx = 0;
+	face[2].vert[1].vdx = 1;
+	face[2].vert[2].vdx = 2;
+	face[2].vert[3].vdx = 3;
+	for (i = 0; i < face[2].n_Vert; i++)
+		face[2].vert[i].cdx = 2;
+	face[3].n_Vert = 4;
+	face[3].vert = new VertexID[4];
+	face[3].vert[0].vdx = 7;
+	face[3].vert[1].vdx = 6;
+	face[3].vert[2].vdx = 5;
+	face[3].vert[3].vdx = 4;
+	for (i = 0; i < face[3].n_Vert; i++)
+		face[3].vert[i].cdx = 3;
 
+	face[4].n_Vert = 4;
+	face[4].vert = new VertexID[4];
+	face[4].vert[0].vdx = 0;
+	face[4].vert[1].vdx = 4;
+	face[4].vert[2].vdx = 5;
+	face[4].vert[3].vdx = 1;
+	for (i = 0; i < face[4].n_Vert; i++)
+		face[4].vert[i].cdx = 4;
 
-	numFaces = 6;
-	face = new Face[numFaces];
-
-	//Left face
-	face[0].nVerts = 4;
-	face[0].vert = new VertexID[face[0].nVerts];
-	face[0].vert[0].vertIndex = 1;
-	face[0].vert[1].vertIndex = 5;
-	face[0].vert[2].vertIndex = 6;
-	face[0].vert[3].vertIndex = 2;
-	for (i = 0; i < face[0].nVerts; i++)
-		face[0].vert[i].colorIndex = 0;
-
-	//Right face
-	face[1].nVerts = 4;
-	face[1].vert = new VertexID[face[1].nVerts];
-	face[1].vert[0].vertIndex = 0;
-	face[1].vert[1].vertIndex = 3;
-	face[1].vert[2].vertIndex = 7;
-	face[1].vert[3].vertIndex = 4;
-	for (i = 0; i < face[1].nVerts; i++)
-		face[1].vert[i].colorIndex = 1;
-
-	//top face
-	face[2].nVerts = 4;
-	face[2].vert = new VertexID[face[2].nVerts];
-	face[2].vert[0].vertIndex = 0;
-	face[2].vert[1].vertIndex = 1;
-	face[2].vert[2].vertIndex = 2;
-	face[2].vert[3].vertIndex = 3;
-	for (i = 0; i < face[2].nVerts; i++)
-		face[2].vert[i].colorIndex = 2;
-
-	//bottom face
-	face[3].nVerts = 4;
-	face[3].vert = new VertexID[face[3].nVerts];
-	face[3].vert[0].vertIndex = 7;
-	face[3].vert[1].vertIndex = 6;
-	face[3].vert[2].vertIndex = 5;
-	face[3].vert[3].vertIndex = 4;
-	for (i = 0; i < face[3].nVerts; i++)
-		face[3].vert[i].colorIndex = 3;
-
-	//near face
-	face[4].nVerts = 4;
-	face[4].vert = new VertexID[face[4].nVerts];
-	face[4].vert[0].vertIndex = 4;
-	face[4].vert[1].vertIndex = 5;
-	face[4].vert[2].vertIndex = 1;
-	face[4].vert[3].vertIndex = 0;
-	for (i = 0; i < face[4].nVerts; i++)
-		face[4].vert[i].colorIndex = 4;
-
-	//Far face
-	face[5].nVerts = 4;
-	face[5].vert = new VertexID[face[5].nVerts];
-	face[5].vert[0].vertIndex = 3;
-	face[5].vert[1].vertIndex = 2;
-	face[5].vert[2].vertIndex = 6;
-	face[5].vert[3].vertIndex = 7;
-	for (i = 0; i < face[5].nVerts; i++)
-		face[5].vert[i].colorIndex = 5;
+	
+	face[5].n_Vert = 4;
+	face[5].vert = new VertexID[4];
+	face[5].vert[0].vdx = 3;
+	face[5].vert[1].vdx = 2;
+	face[5].vert[2].vdx = 6;
+	face[5].vert[3].vdx = 7;
+	for (i = 0; i < face[5].n_Vert; i++)
+		face[5].vert[i].cdx = 5;
 
 }
 void Mesh::Createcanhquat4(float t)
@@ -1000,80 +864,72 @@ void Mesh::Createcanhquat4(float t)
 
 	int i;
 
-	numVerts = 8;
-	pt = new Point3[numVerts];
-	pt[0].set(-0.5, x2, z2);
-	pt[1].set(0.5, x2, z2);
-	pt[2].set(0.5, 0, 0);
-	pt[3].set(-0.5, 0, 0);
-	pt[4].set(-0.5, x, z);
-	pt[5].set(0.5, x, z);
-	pt[6].set(0.5, -1, -sqrt(3));
-	pt[7].set(-0.5, -1, -sqrt(3));
+	num_V = 8;
+	pointt = new Point3[num_V];
+	pointt[0].set(-0.5, x2, z2);
+	pointt[1].set(0.5, x2, z2);
+	pointt[2].set(0.5, 0, 0);
+	pointt[3].set(-0.5, 0, 0);
+	pointt[4].set(-0.5, x, z);
+	pointt[5].set(0.5, x, z);
+	pointt[6].set(0.5, -1, -sqrt(3));
+	pointt[7].set(-0.5, -1, -sqrt(3));
 
+	num_F = 6;
+	face = new Face[num_F];
+	face[0].n_Vert = 4;
+	face[0].vert = new VertexID[4];
+	face[0].vert[0].vdx = 1;
+	face[0].vert[1].vdx = 2;
+	face[0].vert[2].vdx = 6;
+	face[0].vert[3].vdx = 5;
+	for (i = 0; i < face[0].n_Vert; i++)
+		face[0].vert[i].cdx = 0;
 
-	numFaces = 6;
-	face = new Face[numFaces];
+	face[1].n_Vert = 4;
+	face[1].vert = new VertexID[4];
+	face[1].vert[0].vdx = 0;
+	face[1].vert[1].vdx = 4;
+	face[1].vert[2].vdx = 7;
+	face[1].vert[3].vdx = 3;
+	for (i = 0; i < face[1].n_Vert; i++)
+		face[1].vert[i].cdx = 1;
 
-	//Left face
-	face[0].nVerts = 4;
-	face[0].vert = new VertexID[face[0].nVerts];
-	face[0].vert[0].vertIndex = 1;
-	face[0].vert[1].vertIndex = 2;
-	face[0].vert[2].vertIndex = 6;
-	face[0].vert[3].vertIndex = 5;
-	for (i = 0; i < face[0].nVerts; i++)
-		face[0].vert[i].colorIndex = 0;
+	face[2].n_Vert = 4;
+	face[2].vert = new VertexID[4];
+	face[2].vert[0].vdx = 0;
+	face[2].vert[1].vdx = 1;
+	face[2].vert[2].vdx = 2;
+	face[2].vert[3].vdx = 3;
+	for (i = 0; i < face[2].n_Vert; i++)
+		face[2].vert[i].cdx = 2;
 
-	//Right face
-	face[1].nVerts = 4;
-	face[1].vert = new VertexID[face[1].nVerts];
-	face[1].vert[0].vertIndex = 0;
-	face[1].vert[1].vertIndex = 4;
-	face[1].vert[2].vertIndex = 7;
-	face[1].vert[3].vertIndex = 3;
-	for (i = 0; i < face[1].nVerts; i++)
-		face[1].vert[i].colorIndex = 1;
+	face[3].n_Vert = 4;
+	face[3].vert = new VertexID[4];
+	face[3].vert[0].vdx = 7;
+	face[3].vert[1].vdx = 4;
+	face[3].vert[2].vdx = 5;
+	face[3].vert[3].vdx = 6;
+	for (i = 0; i < face[3].n_Vert; i++)
+		face[3].vert[i].cdx = 3;
 
-	//top face
-	face[2].nVerts = 4;
-	face[2].vert = new VertexID[face[2].nVerts];
-	face[2].vert[0].vertIndex = 0;
-	face[2].vert[1].vertIndex = 1;
-	face[2].vert[2].vertIndex = 2;
-	face[2].vert[3].vertIndex = 3;
-	for (i = 0; i < face[2].nVerts; i++)
-		face[2].vert[i].colorIndex = 2;
+	face[4].n_Vert = 4;
+	face[4].vert = new VertexID[4];
+	face[4].vert[0].vdx = 0;
+	face[4].vert[1].vdx = 4;
+	face[4].vert[2].vdx = 5;
+	face[4].vert[3].vdx = 1;
+	for (i = 0; i < face[4].n_Vert; i++)
+		face[4].vert[i].cdx = 4;
 
-	//bottom face
-	face[3].nVerts = 4;
-	face[3].vert = new VertexID[face[3].nVerts];
-	face[3].vert[0].vertIndex = 7;
-	face[3].vert[1].vertIndex = 4;
-	face[3].vert[2].vertIndex = 5;
-	face[3].vert[3].vertIndex = 6;
-	for (i = 0; i < face[3].nVerts; i++)
-		face[3].vert[i].colorIndex = 3;
-
-	//near face
-	face[4].nVerts = 4;
-	face[4].vert = new VertexID[face[4].nVerts];
-	face[4].vert[0].vertIndex = 4;
-	face[4].vert[1].vertIndex = 5;
-	face[4].vert[2].vertIndex = 1;
-	face[4].vert[3].vertIndex = 0;
-	for (i = 0; i < face[4].nVerts; i++)
-		face[4].vert[i].colorIndex = 4;
-
-	//Far face
-	face[5].nVerts = 4;
-	face[5].vert = new VertexID[face[5].nVerts];
-	face[5].vert[0].vertIndex = 3;
-	face[5].vert[1].vertIndex = 2;
-	face[5].vert[2].vertIndex = 6;
-	face[5].vert[3].vertIndex = 7;
-	for (i = 0; i < face[5].nVerts; i++)
-		face[5].vert[i].colorIndex = 5;
+	face[5].n_Vert = 4;
+	face[5].vert = new VertexID[4];
+	face[5].vert[0].vdx = 3;
+	face[5].vert[1].vdx = 2;
+	face[5].vert[2].vdx = 6;
+	face[5].vert[3].vdx = 7;
+	for (i = 0; i < face[5].n_Vert; i++)
+		face[5].vert[i].cdx = 5;
 
 }
 void Mesh::Createcanhquat5(float t)
@@ -1086,80 +942,70 @@ void Mesh::Createcanhquat5(float t)
 
 	int i;
 
-	numVerts = 8;
-	pt = new Point3[numVerts];
-	pt[0].set(-0.5, -5.0, 0);
-	pt[1].set(0.5, -5.0, 0);
-	pt[2].set(0.5, 0, 0);
-	pt[3].set(-0.5, 0, 0);
-	pt[4].set(-0.5, x, z);
-	pt[5].set(0.5, x, z);
-	pt[6].set(0.5, -1, -sqrt(3));
-	pt[7].set(-0.5, -1, -sqrt(3));
+	num_V = 8;
+	pointt = new Point3[num_V];
+	pointt[0].set(-0.5, -5.0, 0);
+	pointt[1].set(0.5, -5.0, 0);
+	pointt[2].set(0.5, 0, 0);
+	pointt[3].set(-0.5, 0, 0);
+	pointt[4].set(-0.5, x, z);
+	pointt[5].set(0.5, x, z);
+	pointt[6].set(0.5, -1, -sqrt(3));
+	pointt[7].set(-0.5, -1, -sqrt(3));
 
 
-	numFaces = 6;
-	face = new Face[numFaces];
+	num_F = 6;
+	face = new Face[num_F];
 
-	//Left face
-	face[0].nVerts = 4;
-	face[0].vert = new VertexID[face[0].nVerts];
-	face[0].vert[0].vertIndex = 1;
-	face[0].vert[1].vertIndex = 5;
-	face[0].vert[2].vertIndex = 6;
-	face[0].vert[3].vertIndex = 2;
-	for (i = 0; i < face[0].nVerts; i++)
-		face[0].vert[i].colorIndex = 0;
+	face[0].n_Vert = 4;
+	face[0].vert = new VertexID[4];
+	face[0].vert[0].vdx = 1;
+	face[0].vert[1].vdx = 5;
+	face[0].vert[2].vdx = 6;
+	face[0].vert[3].vdx = 2;
+	for (i = 0; i < face[0].n_Vert; i++)
+		face[0].vert[i].cdx = 0;
+	face[1].n_Vert = 4;
+	face[1].vert = new VertexID[4];
+	face[1].vert[0].vdx = 0;
+	face[1].vert[1].vdx = 3;
+	face[1].vert[2].vdx = 7;
+	face[1].vert[3].vdx = 4;
+	for (i = 0; i < face[1].n_Vert; i++)
+		face[1].vert[i].cdx = 1;
+	face[2].n_Vert = 4;
+	face[2].vert = new VertexID[4];
+	face[2].vert[0].vdx = 0;
+	face[2].vert[1].vdx = 1;
+	face[2].vert[2].vdx = 2;
+	face[2].vert[3].vdx = 3;
+	for (i = 0; i < face[2].n_Vert; i++)
+		face[2].vert[i].cdx = 2;
+	face[3].n_Vert = 4;
+	face[3].vert = new VertexID[4];
+	face[3].vert[0].vdx = 7;
+	face[3].vert[1].vdx = 6;
+	face[3].vert[2].vdx = 5;
+	face[3].vert[3].vdx = 4;
+	for (i = 0; i < face[3].n_Vert; i++)
+		face[3].vert[i].cdx = 3;
 
-	//Right face
-	face[1].nVerts = 4;
-	face[1].vert = new VertexID[face[1].nVerts];
-	face[1].vert[0].vertIndex = 0;
-	face[1].vert[1].vertIndex = 3;
-	face[1].vert[2].vertIndex = 7;
-	face[1].vert[3].vertIndex = 4;
-	for (i = 0; i < face[1].nVerts; i++)
-		face[1].vert[i].colorIndex = 1;
-
-	//top face
-	face[2].nVerts = 4;
-	face[2].vert = new VertexID[face[2].nVerts];
-	face[2].vert[0].vertIndex = 0;
-	face[2].vert[1].vertIndex = 1;
-	face[2].vert[2].vertIndex = 2;
-	face[2].vert[3].vertIndex = 3;
-	for (i = 0; i < face[2].nVerts; i++)
-		face[2].vert[i].colorIndex = 2;
-
-	//bottom face
-	face[3].nVerts = 4;
-	face[3].vert = new VertexID[face[3].nVerts];
-	face[3].vert[0].vertIndex = 7;
-	face[3].vert[1].vertIndex = 6;
-	face[3].vert[2].vertIndex = 5;
-	face[3].vert[3].vertIndex = 4;
-	for (i = 0; i < face[3].nVerts; i++)
-		face[3].vert[i].colorIndex = 3;
-
-	//near face
-	face[4].nVerts = 4;
-	face[4].vert = new VertexID[face[4].nVerts];
-	face[4].vert[0].vertIndex = 4;
-	face[4].vert[1].vertIndex = 5;
-	face[4].vert[2].vertIndex = 1;
-	face[4].vert[3].vertIndex = 0;
-	for (i = 0; i < face[4].nVerts; i++)
-		face[4].vert[i].colorIndex = 4;
-
-	//Far face
-	face[5].nVerts = 4;
-	face[5].vert = new VertexID[face[5].nVerts];
-	face[5].vert[0].vertIndex = 3;
-	face[5].vert[1].vertIndex = 2;
-	face[5].vert[2].vertIndex = 6;
-	face[5].vert[3].vertIndex = 7;
-	for (i = 0; i < face[5].nVerts; i++)
-		face[5].vert[i].colorIndex = 5;
+	face[4].n_Vert = 4;
+	face[4].vert = new VertexID[4];
+	face[4].vert[0].vdx = 0;
+	face[4].vert[1].vdx = 4;
+	face[4].vert[2].vdx = 5;
+	face[4].vert[3].vdx = 1;
+	for (i = 0; i < face[4].n_Vert; i++)
+		face[4].vert[i].cdx = 4;
+	face[5].n_Vert = 4;
+	face[5].vert = new VertexID[4];
+	face[5].vert[0].vdx = 3;
+	face[5].vert[1].vdx = 2;
+	face[5].vert[2].vdx = 6;
+	face[5].vert[3].vdx = 7;
+	for (i = 0; i < face[5].n_Vert; i++)
+		face[5].vert[i].cdx = 5;
 
 }
 void Mesh::Createcanhquat6(float t)
@@ -1172,188 +1018,160 @@ void Mesh::Createcanhquat6(float t)
 
 	int i;
 
-	numVerts = 8;
-	pt = new Point3[numVerts];
-	pt[0].set(-0.5, -5.0, 0);
-	pt[1].set(0.5, -5.0, 0);
-	pt[2].set(0.5, 0, 0);
-	pt[3].set(-0.5, 0, 0);
-	pt[4].set(-0.5, x, z);
-	pt[5].set(0.5, x, z);
-	pt[6].set(0.5, -1, sqrt(3));
-	pt[7].set(-0.5, -1, sqrt(3));
+	num_V = 8;
+	pointt = new Point3[num_V];
+	pointt[0].set(-0.5, -5.0, 0);
+	pointt[1].set(0.5, -5.0, 0);
+	pointt[2].set(0.5, 0, 0);
+	pointt[3].set(-0.5, 0, 0);
+	pointt[4].set(-0.5, x, z);
+	pointt[5].set(0.5, x, z);
+	pointt[6].set(0.5, -1, sqrt(3));
+	pointt[7].set(-0.5, -1, sqrt(3));
 
 
-	numFaces = 6;
-	face = new Face[numFaces];
+	num_F = 6;
+	face = new Face[num_F];
 
-	//Left face
-	face[0].nVerts = 4;
-	face[0].vert = new VertexID[face[0].nVerts];
-	face[0].vert[0].vertIndex = 1;
-	face[0].vert[1].vertIndex = 2;
-	face[0].vert[2].vertIndex = 6;
-	face[0].vert[3].vertIndex = 5;
-	for (i = 0; i < face[0].nVerts; i++)
-		face[0].vert[i].colorIndex = 0;
+	face[0].n_Vert = 4;
+	face[0].vert = new VertexID[4];
+	face[0].vert[0].vdx = 1;
+	face[0].vert[1].vdx = 2;
+	face[0].vert[2].vdx = 6;
+	face[0].vert[3].vdx = 5;
+	for (i = 0; i < face[0].n_Vert; i++)
+		face[0].vert[i].cdx = 0;
 
-	//Right face
-	face[1].nVerts = 4;
-	face[1].vert = new VertexID[face[1].nVerts];
-	face[1].vert[0].vertIndex = 0;
-	face[1].vert[1].vertIndex = 4;
-	face[1].vert[2].vertIndex = 7;
-	face[1].vert[3].vertIndex = 3;
-	for (i = 0; i < face[1].nVerts; i++)
-		face[1].vert[i].colorIndex = 1;
+	face[1].n_Vert = 4;
+	face[1].vert = new VertexID[4];
+	face[1].vert[0].vdx = 0;
+	face[1].vert[1].vdx = 4;
+	face[1].vert[2].vdx = 7;
+	face[1].vert[3].vdx = 3;
+	for (i = 0; i < face[1].n_Vert; i++)
+		face[1].vert[i].cdx = 1;
+	face[2].n_Vert = 4;
+	face[2].vert = new VertexID[4];
+	face[2].vert[0].vdx = 0;
+	face[2].vert[1].vdx = 1;
+	face[2].vert[2].vdx = 2;
+	face[2].vert[3].vdx = 3;
+	for (i = 0; i < face[2].n_Vert; i++)
+		face[2].vert[i].cdx = 2;
+	face[3].n_Vert = 4;
+	face[3].vert = new VertexID[4];
+	face[3].vert[0].vdx = 7;
+	face[3].vert[1].vdx = 4;
+	face[3].vert[2].vdx = 5;
+	face[3].vert[3].vdx = 6;
+	for (i = 0; i < face[3].n_Vert; i++)
+		face[3].vert[i].cdx = 3;
+	face[4].n_Vert = 4;
+	face[4].vert = new VertexID[4];
+	face[4].vert[0].vdx = 0;
+	face[4].vert[1].vdx = 4;
+	face[4].vert[2].vdx = 5;
+	face[4].vert[3].vdx = 1;
+	for (i = 0; i < face[4].n_Vert; i++)
+		face[4].vert[i].cdx = 4;
 
-	//top face
-	face[2].nVerts = 4;
-	face[2].vert = new VertexID[face[2].nVerts];
-	face[2].vert[0].vertIndex = 0;
-	face[2].vert[1].vertIndex = 1;
-	face[2].vert[2].vertIndex = 2;
-	face[2].vert[3].vertIndex = 3;
-	for (i = 0; i < face[2].nVerts; i++)
-		face[2].vert[i].colorIndex = 2;
-
-	//bottom face
-	face[3].nVerts = 4;
-	face[3].vert = new VertexID[face[3].nVerts];
-	face[3].vert[0].vertIndex = 7;
-	face[3].vert[1].vertIndex = 4;
-	face[3].vert[2].vertIndex = 5;
-	face[3].vert[3].vertIndex = 6;
-	for (i = 0; i < face[3].nVerts; i++)
-		face[3].vert[i].colorIndex = 3;
-
-	//near face
-	face[4].nVerts = 4;
-	face[4].vert = new VertexID[face[4].nVerts];
-	face[4].vert[0].vertIndex = 4;
-	face[4].vert[1].vertIndex = 5;
-	face[4].vert[2].vertIndex = 1;
-	face[4].vert[3].vertIndex = 0;
-	for (i = 0; i < face[4].nVerts; i++)
-		face[4].vert[i].colorIndex = 4;
-
-	//Far face
-	face[5].nVerts = 4;
-	face[5].vert = new VertexID[face[5].nVerts];
-	face[5].vert[0].vertIndex = 3;
-	face[5].vert[1].vertIndex = 2;
-	face[5].vert[2].vertIndex = 6;
-	face[5].vert[3].vertIndex = 7;
-	for (i = 0; i < face[5].nVerts; i++)
-		face[5].vert[i].colorIndex = 5;
-
+	face[5].n_Vert = 4;
+	face[5].vert = new VertexID[4];
+	face[5].vert[0].vdx = 3;
+	face[5].vert[1].vdx = 2;
+	face[5].vert[2].vdx = 6;
+	face[5].vert[3].vdx = 7;
+	for (i = 0; i < face[5].n_Vert; i++)
+		face[5].vert[i].cdx = 5;
 
 }
-void Mesh::CreateRectangular(float chieu_dai, float chieu_rong, float beday)
+void Mesh::CreateMotPhanThanhLienKet(float chieu_dai, float chieu_rong, float beday)
 {
-	numVerts = 8;
-	numFaces = 6;
-	pt = new Point3[numVerts];
-	face = new Face[numFaces];
-	int idx = 0;
+	num_V = 8;
+	num_F = 6;
+	pointt = new Point3[num_V];
+	face = new Face[num_F];
+	int i_f = 0;
 	int indexColor = 1;
 	{
-		pt[0].set(0, 0, 0); //A
-		pt[1].set(0, 0, chieu_dai); //B
-		pt[2].set(chieu_rong, 0, chieu_dai); //C
-		pt[3].set(chieu_rong, 0, 0); //D
-		pt[4].set(0, beday, 0); //A'
-		pt[5].set(0, beday, chieu_dai); //B
-		pt[6].set(chieu_rong, beday, chieu_dai); //C
-		pt[7].set(chieu_rong, beday, 0); //D
+		pointt[0].set(0, 0, 0); 
+		pointt[1].set(0, 0, chieu_dai); 
+		pointt[2].set(chieu_rong, 0, chieu_dai); 
+		pointt[3].set(chieu_rong, 0, 0); 
+		pointt[4].set(0, beday, 0); 
+		pointt[5].set(0, beday, chieu_dai); 
+		pointt[6].set(chieu_rong, beday, chieu_dai); 
+		pointt[7].set(chieu_rong, beday, 0);
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = 0;
+		face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = 2;
+		face[i_f].vert[3].vdx = 3;
+		for (int i = 0; i < face[i_f].n_Vert; i++)
+			face[i_f].vert[i].cdx = indexColor;
+		i_f++;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = 4;
+		face[i_f].vert[1].vdx = 5;
+		face[i_f].vert[2].vdx = 6;
+		face[i_f].vert[3].vdx = 7;
+		for (int i = 0; i < face[i_f].n_Vert; i++)
+			face[i_f].vert[i].cdx = indexColor;
+		i_f++;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = 4;
+		face[i_f].vert[1].vdx = 0;
+		face[i_f].vert[2].vdx = 3;
+		face[i_f].vert[3].vdx = 7;
+		for (int i = 0; i < face[i_f].n_Vert; i++)
+			face[i_f].vert[i].cdx = indexColor;
+		i_f++;
 
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 0;
-		face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = 2;
-		face[idx].vert[3].vertIndex = 3;
-		for (int i = 0; i < face[idx].nVerts; i++)
-			face[idx].vert[i].colorIndex = indexColor;
-		idx++;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = 1;
+		face[i_f].vert[1].vdx = 2;
+		face[i_f].vert[2].vdx = 6;
+		face[i_f].vert[3].vdx = 5;
+		for (int i = 0; i < face[i_f].n_Vert; i++)
+			face[i_f].vert[i].cdx = indexColor;
+		i_f++;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = 2;
+		face[i_f].vert[1].vdx = 3;
+		face[i_f].vert[2].vdx = 7;
+		face[i_f].vert[3].vdx = 6;
+		for (int i = 0; i < face[i_f].n_Vert; i++)
+			face[i_f].vert[i].cdx = indexColor;
+		i_f++;
 
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 4;
-		face[idx].vert[1].vertIndex = 5;
-		face[idx].vert[2].vertIndex = 6;
-		face[idx].vert[3].vertIndex = 7;
-		for (int i = 0; i < face[idx].nVerts; i++)
-			face[idx].vert[i].colorIndex = indexColor;
-		idx++;
-
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 0;
-		face[idx].vert[1].vertIndex = 3;
-		face[idx].vert[2].vertIndex = 7;
-		face[idx].vert[3].vertIndex = 4;
-		for (int i = 0; i < face[idx].nVerts; i++)
-			face[idx].vert[i].colorIndex = indexColor;
-		idx++;
-
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 1;
-		face[idx].vert[1].vertIndex = 2;
-		face[idx].vert[2].vertIndex = 6;
-		face[idx].vert[3].vertIndex = 5;
-		for (int i = 0; i < face[idx].nVerts; i++)
-			face[idx].vert[i].colorIndex = indexColor;
-		idx++;
-
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 2;
-		face[idx].vert[1].vertIndex = 3;
-		face[idx].vert[2].vertIndex = 7;
-		face[idx].vert[3].vertIndex = 6;
-		for (int i = 0; i < face[idx].nVerts; i++)
-			face[idx].vert[i].colorIndex = indexColor;
-		idx++;
-
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 0;
-		face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = 5;
-		face[idx].vert[3].vertIndex = 4;
-		for (int i = 0; i < face[idx].nVerts; i++)
-			face[idx].vert[i].colorIndex = indexColor;
-		idx++;
+		face[i_f].n_Vert = 4;
+		face[i_f].vert = new VertexID[face[i_f].n_Vert];
+		face[i_f].vert[0].vdx = 0;
+		face[i_f].vert[1].vdx = 1;
+		face[i_f].vert[2].vdx = 5;
+		face[i_f].vert[3].vdx = 4;
+		for (int i = 0; i < face[i_f].n_Vert; i++)
+			face[i_f].vert[i].cdx = indexColor;
+		i_f++;
 	}
-}
-void Mesh::CreateNuavongtron1_3(float t, float fx, float beday) {
-	CreateNuaVongTron3(t, fx, beday);
-
-}
-void Mesh::CreateNuavongtron1_1(float t, float fx, float beday) {
-	CreateNuaVongTron(t, fx, beday);
-
-}
-void Mesh::CreateNuavongtron1_2(float t, float fx, float beday) {
-
-
-	CreateNuaVongTron2(t, fx, beday);
-
 }
 void Mesh::DrawWireframe()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	for (int f = 0; f < numFaces; f++)
+	for (int f = 0; f < num_F; f++)
 	{
 		glBegin(GL_POLYGON);
-		for (int v = 0; v < face[f].nVerts; v++)
+		for (int v = 0; v < face[f].n_Vert; v++)
 		{
-			int		iv = face[f].vert[v].vertIndex;
-			int ic = face[f].vert[v].colorIndex;
+			int		iv = face[f].vert[v].vdx;
+			int ic = face[f].vert[v].cdx;
 			glColor3f(ColorArr[ic][0], ColorArr[ic][1], ColorArr[ic][2]);
-			glVertex3f(pt[iv].x, pt[iv].y, pt[iv].z);
+			glVertex3f(pointt[iv].x, pointt[iv].y, pointt[iv].z);
 		}
 		glEnd();
 	}
@@ -1361,17 +1179,17 @@ void Mesh::DrawWireframe()
 void Mesh::DrawColor()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	for (int f = 0; f < numFaces; f++)
+	for (int f = 0; f < num_F; f++)
 	{
 		glBegin(GL_POLYGON);
-		for (int v = 0; v < face[f].nVerts; v++)
+		for (int v = 0; v < face[f].n_Vert; v++)
 		{
-			int iv = face[f].vert[v].vertIndex;
-			int ic = face[f].vert[v].colorIndex;
+			int iv = face[f].vert[v].vdx;
+			int ic = face[f].vert[v].cdx;
 			
 			glColor3f(ColorArr[ic][0], ColorArr[ic][1], ColorArr[ic][2]);
-			glNormal3f(face[f].vtNewell.x, face[f].vtNewell.y, face[f].vtNewell.z);
-			glVertex3f(pt[iv].x, pt[iv].y, pt[iv].z);
+			glNormal3f(face[f].vN.x, face[f].vN.y, face[f].vN.z);
+			glVertex3f(pointt[iv].x, pointt[iv].y, pointt[iv].z);
 		
 		
 		}
@@ -1385,30 +1203,30 @@ void Mesh::addMaterial(float ambient[], float diffuse[], float specular[], float
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiness);
 }
-void Mesh::vectorNewell()
+void Mesh::v_new()
 {
-	for (int f = 0; f < numFaces; f++)
+	for (int f = 0; f < num_F; f++)
 	{
 		float vectorN[] = { 0,0,0 };
-		for (int v = 0; v < face[f].nVerts; v++)
+		for (int v = 0; v < face[f].n_Vert; v++)
 		{
-			int iv = face[f].vert[v].vertIndex;
-			int next = face[f].vert[(v + 1) % face[f].nVerts].vertIndex;
-			vectorN[0] += (pt[iv].y - pt[next].y) * (pt[iv].z + pt[next].z);
-			vectorN[1] += (pt[iv].z - pt[next].z) * (pt[iv].x + pt[next].x);
-			vectorN[2] += (pt[iv].x - pt[next].x) * (pt[iv].y + pt[next].y);
+			int iv = face[f].vert[v].vdx;
+			int next = face[f].vert[(v + 1) % face[f].n_Vert].vdx;
+			vectorN[0] += (pointt[iv].y - pointt[next].y) * (pointt[iv].z + pointt[next].z);
+			vectorN[1] += (pointt[iv].z - pointt[next].z) * (pointt[iv].x + pointt[next].x);
+			vectorN[2] += (pointt[iv].x - pointt[next].x) * (pointt[iv].y + pointt[next].y);
 		}
-		face[f].vtNewell.set(vectorN[0], vectorN[1], vectorN[2]);
-		face[f].vtNewell.normalize();
+		face[f].vN.set(vectorN[0], vectorN[1], vectorN[2]);
+		face[f].vN.chuanhoa();
 	}
 }
-void Mesh::SetColor(int colorIdx)
+void Mesh::SetColor(int i_color)
 {
-	for (int f = 0; f < numFaces; f++)
+	for (int f = 0; f < num_F; f++)
 	{
-		for (int v = 0; v < face[f].nVerts; v++)
+		for (int v = 0; v < face[f].n_Vert; v++)
 		{
-			face[f].vert[v].colorIndex = colorIdx;
+			face[f].vert[v].cdx = i_color;
 		}
 	}
 }
@@ -1450,11 +1268,11 @@ void CreateMotVietGach(float bankinh,float chieucao) {
 	float bankinh2 = bankinh/(cos(15.0*PI/180.0)- sin(15.0 * PI / 180.0)* tan(60.0 * PI / 180.0));
 	int so_lopchia =6;
 	int so_lopchia2 = 12;
-	Point3* pt_gach = new Point3[so_lopchia+1];
-	Point3* pt_gach2 = new Point3[so_lopchia2 + 1];
+	Point3* pointt_gach = new Point3[so_lopchia+1];
+	Point3* pointt_gach2 = new Point3[so_lopchia2 + 1];
 
 	int		i;
-	int		idx;
+	int		i_f;
 	float	do_quay = (2*PI) / (so_lopchia );
 	float	do_quay2 = (2 * PI) / (so_lopchia2);
 	float	x, y, z;
@@ -1467,11 +1285,11 @@ void CreateMotVietGach(float bankinh,float chieucao) {
 		
 		y = chieucao;
 		
-		pt_gach[i].set(x, y, z);
+		pointt_gach[i].set(x, y, z);
 
 		
 	}
-	pt_gach[so_lopchia ].set(pt_gach[0].x, pt_gach[0].y,pt_gach[0].z);
+	pointt_gach[so_lopchia ].set(pointt_gach[0].x, pointt_gach[0].y,pointt_gach[0].z);
 
 
 	for (i = 0; i < so_lopchia2; i++)
@@ -1481,11 +1299,11 @@ void CreateMotVietGach(float bankinh,float chieucao) {
 
 		y = chieucao;
 
-		pt_gach2[i].set(x, y, z);
+		pointt_gach2[i].set(x, y, z);
 
 
 	}
-	pt_gach2[so_lopchia2].set(pt_gach2[0].x, pt_gach2[0].y, pt_gach2[0].z);
+	pointt_gach2[so_lopchia2].set(pointt_gach2[0].x, pointt_gach2[0].y, pointt_gach2[0].z);
 
 
 	glNormal3f(1.0f, 1.0f, 0.0f);
@@ -1496,7 +1314,7 @@ void CreateMotVietGach(float bankinh,float chieucao) {
 	
 	for (i = 0; i < so_lopchia+1; i++)
 	{
-		glVertex3f(pt_gach[i].x,pt_gach[i].y,pt_gach[i].z);
+		glVertex3f(pointt_gach[i].x,pointt_gach[i].y,pointt_gach[i].z);
 	
 	}
 	glEnd();
@@ -1507,10 +1325,10 @@ void CreateMotVietGach(float bankinh,float chieucao) {
 	for (i = 0; i < so_lopchia; i++)
 	{
 		glBegin(GL_POLYGON);
-		glVertex3f(pt_gach[i].x, pt_gach[i].y, pt_gach[i].z);
-		glVertex3f(pt_gach2[i*2].x, pt_gach2[i*2].y, pt_gach2[i*2].z);
-		glVertex3f(pt_gach2[i*2+1].x, pt_gach2[i*2+1].y, pt_gach2[i*2+1].z);
-		glVertex3f(pt_gach[i].x, pt_gach[i].y, pt_gach[i].z);
+		glVertex3f(pointt_gach[i].x, pointt_gach[i].y, pointt_gach[i].z);
+		glVertex3f(pointt_gach2[i*2].x, pointt_gach2[i*2].y, pointt_gach2[i*2].z);
+		glVertex3f(pointt_gach2[i*2+1].x, pointt_gach2[i*2+1].y, pointt_gach2[i*2+1].z);
+		glVertex3f(pointt_gach[i].x, pointt_gach[i].y, pointt_gach[i].z);
 		glEnd();
 
 	}
@@ -1521,11 +1339,11 @@ void CreateMotVietGach(float bankinh,float chieucao) {
 	{	
 		
 		glBegin(GL_POLYGON);
-		glVertex3f(pt_gach[i].x, pt_gach[i].y, pt_gach[i].z);
-		glVertex3f(pt_gach2[i * 2+1].x, pt_gach2[i *2+1].y, pt_gach2[i *2 +1].z);
+		glVertex3f(pointt_gach[i].x, pointt_gach[i].y, pointt_gach[i].z);
+		glVertex3f(pointt_gach2[i * 2+1].x, pointt_gach2[i *2+1].y, pointt_gach2[i *2 +1].z);
 	
-		glVertex3f(pt_gach2[i * 2 + 2].x, pt_gach2[i * 2 + 1].y, pt_gach2[i * 2 + 2].z);
-		glVertex3f(pt_gach[i + 1].x, pt_gach[i + 1].y, pt_gach[i + 1].z);
+		glVertex3f(pointt_gach2[i * 2 + 2].x, pointt_gach2[i * 2 + 1].y, pointt_gach2[i * 2 + 2].z);
+		glVertex3f(pointt_gach[i + 1].x, pointt_gach[i + 1].y, pointt_gach[i + 1].z);
 		glEnd();
 
 	}
@@ -1535,14 +1353,14 @@ void CreateMotVietGach(float bankinh,float chieucao) {
 void DrawNen() {
 	glDisable(GL_LIGHTING);
 	float bankinh = 2.0;
-	int t = 15;
+	int ttt = 15;
 	
 	float chieucao = -12.0;
 	float bankinh2 = bankinh / (cos(15.0 * PI / 180.0) - sin(15.0 * PI / 180.0) * tan(60.0 * PI / 180.0));
 	float dx = bankinh2 * cos(15.0 * PI / 180.0)+bankinh * cos(30.0 * PI / 180.0);
 	float dz = bankinh2 * cos(15.0 * PI / 180.0) * 2 + bankinh;
-	for (int j = -t; j < t; j++) {
-		for (int n = -t; n <t; n++) {
+	for (int j = -ttt; j < ttt; j++) {
+		for (int n = -ttt; n <ttt; n++) {
 			glPushMatrix();
 			glTranslatef(dx*j,0,dz*n);
 			//glRotatef()
@@ -1551,8 +1369,8 @@ void DrawNen() {
 		}
 	}
 
-	for (int j = -t; j < t; j++) {
-		for (int n = -t; n < t; n++) {
+	for (int j = -ttt; j < ttt; j++) {
+		for (int n = -ttt; n < ttt; n++) {
 			glPushMatrix();	
 			glTranslatef(dx/2.0, 0, dx*sin(60.0*PI/180.0));
 			glTranslatef(dx * j, 0, dz*n);
@@ -1563,7 +1381,7 @@ void DrawNen() {
 	}
 	glEnable(GL_LIGHTING);
 }
-float* vectorNewell(float iVector[10][3], int n)
+float* v_new(float iVector[10][3], int n)
 {
 	float vectorResult[] = { 0,0,0 };
 	for (int i = 0; i < n; i++)
@@ -1574,145 +1392,7 @@ float* vectorNewell(float iVector[10][3], int n)
 	}
 	return vectorResult;
 }
-void drawviengachvuong(float x, float y, float z, float alpha)
-{
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glBegin(GL_QUADS);
-	glColor3f(1.0, 1.0, 1.0);
-	//glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(x, y, z);
-	glVertex3f(x + 2, y, z);
-	glVertex3f(x + 2, y, z + 2);
-	glVertex3f(x, y, z + 2);
-	glEnd();
-}
 
-void drawNen1(float alpha)
-{
-	float x = -31.4;
-	float z = -30;
-	float y = -10;
-	glDisable(GL_LIGHTING);
-	glColor3f(0.0f, 1.0f, 1.0f);
-	for (int i = 0; i < 30; i++)
-	{
-		x = x + 2.1;
-		for (int j = 0; j < 30; j++) {
-			z = z + 2.1;
-			drawviengachvuong(x, y, z, alpha);
-		}
-		z = -30;
-	}
-	glEnable(GL_LIGHTING);
-}
-void viengach1(float a, float b, float alpha) {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glColor4f(151 / 255, 255 / 255, 255 / 255, alpha);
-	glLineWidth(2);
-	float R = 1;
-	float y = 0;
-	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i <= 90; i++) {
-		float x = a + R * cos(i * PI / 180.0);
-		float z = b + R * sin(i * PI / 180.0);
-		glVertex3f(x, y, z);
-	}
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	for (int i = 180; i <= 270; i++) {
-		float x = a + R * cos(i * PI / 180.0) + 2;
-		float z = b + R * sin(i * PI / 180.0) + 2;
-		glVertex3f(x, y, z);
-	}
-	glEnd();
-}
-void viengach2(float a, float b, float alpha) {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glColor4f(151 / 255, 255 / 255, 255 / 255, alpha);
-	glLineWidth(2);
-	float R = 1;
-	float y = 0;
-	glBegin(GL_LINE_STRIP);
-	for (int i = 90; i <= 180; i++) {
-		float x = a + R * cos(i * PI / 180.0) + 2;
-		float z = b + R * sin(i * PI / 180.0);
-		glVertex3f(x, y, z);
-	}
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	for (int i = 270; i <= 360; i++) {
-		float x = a + R * cos(i * PI / 180.0);
-		float z = b + R * sin(i * PI / 180.0) + 2;
-		glVertex3f(x, y, z);
-	}
-	glEnd();
-}
-void viengach3(float a, float b, float alpha) {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glColor4f(151 / 255, 255 / 255, 255 / 255, alpha);
-	glLineWidth(2);
-	float y = 0;
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(a + 1.0, y, b); glVertex3f(a + 1.0, y, b + 2.0);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(a, y, b + 1.0); glVertex3f(a + 2.0, y, b + 1.0);
-	glEnd();
-}
-void viengach4(float a, float b, float alpha) {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glColor4f(151 / 255, 255 / 255, 255 / 255, alpha);
-	float R = 0.5;
-	glLineWidth(2);
-	float y = 0;
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(a + 1.0, y, b); glVertex3f(a + 1.0, y, b + 0.5);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(a + 1.0, y, b + 1.5); glVertex3f(a + 1.0, y, b + 2.0);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(a, y, b + 1.0); glVertex3f(a + 0.5, y, b + 1.0);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(a + 1.5, y, b + 1.0); glVertex3f(a + 2.0, y, b + 1.0);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i <= 360; i++) {
-		float x = a + R * cos(i * PI / 180.0) + 1;
-		float z = b + R * sin(i * PI / 180.0) + 1;
-		glVertex3f(x, y, z);
-	}
-	glEnd();
-}
-void drawNen(float alpha)
-{
-	int m = 0;
-	float y = 0;
-	glDisable(GL_LIGHTING);
-	for (float x = -40; x <= 40; x = x + 2)
-	{
-		for (float z = -40; z <= 40; z = z + 2) {
-			switch (arr[m]) {
-			case 0:
-				viengach1(x, z, alpha);
-				break;
-			case 1:
-				viengach2(x, z, alpha);
-				break;
-			case 2:
-				viengach3(x, z, alpha);
-				break;
-			case 3:
-				viengach4(x, z, alpha);
-			default:
-				break;
-			}
-			m++;
-		}
-	}
-	glEnable(GL_LIGHTING);
-}
 void DrawThanhLienKet1()
 {
 	float t = 0.8;
@@ -1821,9 +1501,8 @@ void DrawThanhLienKet2()
 		
 		
 
-		rectangular2.DrawWireframe();
 
-		
+		rectangular2.DrawWireframe();
 
 
 
@@ -1847,7 +1526,18 @@ void DrawThanhLienKet2()
 
 
 		glTranslatef(0, 0, -t);
+
+
+		glRotatef(180, 0, 1, 0);
+		glTranslatef(-1, 0, -t / 2);
+
 		rectangular2.DrawColor();
+
+		glTranslatef(1, 0, t / 2);
+		glRotatef(-180, 0, 1, 0);
+
+
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -1903,7 +1593,15 @@ void DrawThanhLienKet3()
 
 
 		glTranslatef(0, 0, -t);
+
+		glRotatef(180, 0, 1, 0);
+		glTranslatef(-1, 0, -t / 2);
+
 		rectangular2.DrawColor();
+
+		glTranslatef(1, 0, t / 2);
+		glRotatef(-180, 0, 1, 0);
+
 		glTranslatef(0, 0, t);
 		glTranslatef(0, 0, t / 4);
 		glTranslatef(0.5, 0, 0);
@@ -2381,10 +2079,20 @@ void DrawTruc2() {
 	glPopMatrix();
 
 }
-void DrawObject()
+void myDisplay()
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(camera[0], camera[1], camera[2], 0, 0, 0, 0, 1, 0);
+	glViewport(0, 0, screenWidth, screenHeight);
+	GLfloat light_position0[] = { -30.0, 30.0, -15.0, 0.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
+	GLfloat light_position1[] = { 30.0, 30.0, -15.0, 0.0 };
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+	glClearStencil(0);
+	glClearDepth(1.0f);
 	glColor3f(0, 0, 0);
-	
 	DrawThanhLienKet1();
 	DrawThanhLienKet2();
 	DrawThanhLienKet3();
@@ -2396,67 +2104,23 @@ void DrawObject()
 	DrawCanhQuat3();
 	DrawTruc1();
 	DrawTruc2();
-}
-void myDisplay()
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	
-
-	
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(camera[0], camera[1], camera[2], 0, 0, 0, 0, 1, 0);
-	glViewport(0, 0, screenWidth, screenHeight);
-
-
-
-
-
-	GLfloat light_position0[] = { -30.0, 30.0, -15.0, 0.0 };
-
-
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
-
-	GLfloat light_position1[] = { 30.0, 30.0, -15.0, 0.0 };
-	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
-
-
-	glClearStencil(0);
-	glClearDepth(1.0f);
-
-	
-	DrawObject();
-	
+	DrawNen();
 	glDisable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
 	glEnable(GL_STENCIL_TEST);
 	glStencilFunc(GL_ALWAYS, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-
 	glStencilFunc(GL_EQUAL, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
 	glDisable(GL_STENCIL_TEST);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	DrawNen();
-	//drawNen(0.7f);
-	glDisable(GL_BLEND);
-
 	glFlush();
 	glutSwapBuffers();
 }
 void myInit()
 {
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
 	glFrontFace(GL_CCW);
 	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
@@ -2488,86 +2152,83 @@ void myInit()
 	
 
 
-	glOrtho(-fHalfSize * 2, fHalfSize * 2, -fHalfSize / 2, fHalfSize + fHalfSize / 2, -1000, 1000);
+	glOrtho(-size_vieww * 2, size_vieww * 2, -size_vieww / 2, size_vieww + size_vieww / 2, -1000, 1000);
 
 }
-void rotateCamera(int value)
+void updateCam()
 {
-	camera_angle += (GLfloat)value;
-	if (camera_angle > 360) camera_angle = camera_angle - 360.0f;
-	camera[0] = camera_dis * cos(DEGRADIAN * camera_angle);
-	camera[2] = camera_dis * sin(DEGRADIAN * camera_angle);
-	glutTimerFunc(10, rotateCamera, 1);
-	glutPostRedisplay();
-}
-void updatePosCamera()
-{
-	camera[0] = camera_dis * cos(DEGRADIAN * camera_angle);
+	camera[0] = bankinh_camera * cos((PI / 180.0) * doxoay_camera);
 	camera[1] = camera[1];
-	camera[2] = camera_dis * sin(DEGRADIAN * camera_angle);
+	camera[2] = bankinh_camera * sin((PI / 180.0) * doxoay_camera);
 }
 void OnKeySpecial(int key, int x, int y)
 {
 	if (state2D==true) {
 		return;
 	}
-
 	switch (key)
 	{
+
+	case GLUT_KEY_RIGHT:
+	{
+		doxoay_camera--;
+		if (doxoay_camera < 0) doxoay_camera = 360.0f;
+		updateCam();
+		myInit();
+		break;
+	}
 	case GLUT_KEY_LEFT:
 	{
 		
-		camera_angle++;
-		if (camera_angle > 360) camera_angle = camera_angle - 360.0f;
-		updatePosCamera();
+		doxoay_camera++;
+		if (doxoay_camera > 360) doxoay_camera = doxoay_camera - 360.0f;
+		updateCam();
 		myInit();
 		break;
 	}
-	case GLUT_KEY_RIGHT:
+	
+	
+	case GLUT_KEY_DOWN:
 	{
-		camera_angle--;
-		if (camera_angle < 0) camera_angle = 360.0f;
-		updatePosCamera();
+		if (size_vieww >= size_vieww_bandau / 2 && camera[1] >= 0)
+		{
+			size_vieww -= 0.1;
+			camera[1] -= 0.1;
+		}
+		else
+		{
+			size_vieww += 0.1;
+			camera[1] -= 0.1;
+		}
 		myInit();
 		break;
 	}
+
+
 	case GLUT_KEY_UP:
 	{
-		if (fHalfSize >= fConstFS / 2 && camera[1] < 0)
+		if (size_vieww >= size_vieww_bandau / 2 && camera[1] < 0)
 		{
-			fHalfSize -= 0.1;
+			size_vieww -= 0.1;
 			camera[1] += 0.1;
 		}
 		else
 		{
-			fHalfSize += 0.1;
+			size_vieww += 0.1;
 			camera[1] += 0.1;
 		}
 		myInit();
 		break;
 	}
 
-	case GLUT_KEY_DOWN:
-	{
-		if (fHalfSize >= fConstFS / 2 && camera[1] >= 0)
-		{
-			fHalfSize -= 0.1;
-			camera[1] -= 0.1;
-		}
-		else
-		{
-			fHalfSize += 0.1;
-			camera[1] -= 0.1;
-		}
-		myInit();
-		break;
-	}
+
 	default:
 		break;
 	}
+	
 	glutPostRedisplay();
 }
-void OnKeyboard(unsigned char key, int x, int y)
+void OnKeyBoard(unsigned char key, int x, int y)
 {
 	if (key == 'w' || key == 'W')
 	{
@@ -2582,41 +2243,41 @@ void OnKeyboard(unsigned char key, int x, int y)
 		if (state2D ==true)
 		{
 			state2D = false;
-			camera[0] = cameraState[0];
-			camera[1] = cameraState[1];
-			camera[2] = cameraState[2];
+			camera[0] = luutrangthai_camera[0];
+			camera[1] = luutrangthai_camera[1];
+			camera[2] = luutrangthai_camera[2];
 		
 		}
 		else
 		{
 
 			state2D = true;
-			cameraState[0] = camera[0];
-			cameraState[1] = camera[1];
-			cameraState[2] = camera[2];
-			cameraState[3] = 0;
-			cameraState[4] = 90;
-			cameraState[5] =1;
-			camera[0] = cameraState[3];
-			camera[1] = cameraState[4];
-			camera[2] = cameraState[5];
+			luutrangthai_camera[0] = camera[0];
+			luutrangthai_camera[1] = camera[1];
+			luutrangthai_camera[2] = camera[2];
+			luutrangthai_camera[3] = 0;
+			luutrangthai_camera[4] = 90;
+			luutrangthai_camera[5] =1;
+			camera[0] = luutrangthai_camera[3];
+			camera[1] = luutrangthai_camera[4];
+			camera[2] = luutrangthai_camera[5];
 		
 		}
 	}
 	
 	else if (key == '+' && state2D == false)
 	{
-		if (camera_dis < 0)
+		if (bankinh_camera < 0)
 		{
-			camera_dis -= 0.1;
-			fHalfSize += 0.1;
+			bankinh_camera -= 0.1;
+			size_vieww += 0.1;
 		}
 		else
 		{
-			camera_dis -= 0.1;
-			fHalfSize -= 0.1;
+			bankinh_camera -= 0.1;
+			size_vieww -= 0.1;
 		}
-		updatePosCamera();
+		updateCam();
 
 
 		myInit();
@@ -2624,17 +2285,17 @@ void OnKeyboard(unsigned char key, int x, int y)
 
 	else if (key == '-' && state2D ==false)
 	{
-		if (camera_dis >= 0)
+		if (bankinh_camera >= 0)
 		{
-			camera_dis += 0.1;
-			fHalfSize += 0.1;
+			bankinh_camera += 0.1;
+			size_vieww += 0.1;
 		}
 		else
 		{
-			camera_dis += 0.1;
-			fHalfSize -= 0.1;
+			bankinh_camera += 0.1;
+			size_vieww -= 0.1;
 		}
-		updatePosCamera();
+		updateCam();
 	
 		myInit();
 	}
@@ -2664,136 +2325,125 @@ int main(int argc, char* argv[])
 	glutInitWindowPosition(0, 0); 
 	glutCreateWindow("Doan Quang Chinh 1710685"); 
 
-	cout << "1: Xoay ban quay nguoc chieu kim dong ho" << endl;
-	cout << "2: Xoay ban quay cung chieu kim dong ho" << endl;
-	cout << "3,4: Dieu chinh vi tri chot 2" << endl;
-	cout << "W, w: Chuyen doi qua lai giua che do khung day va to mau" << endl;
-	cout << "V, v: Chuyen doi qua lai giua hai che do nhin khac nhau" << endl;
+	cout << "1:		 Xoay canh quat nguoc chieu kim dong ho" << endl;
+	cout << "2:		 Xoay canh quat cung chieu kim dong ho" << endl;
+	
+	cout << "W, w  : Chuyen doi qua lai giua che do khung day va to mau" << endl;
+	cout << "V, v  : Chuyen doi che do " << endl;
 	
 	cout << "+   : Tang khoang cach camera" << endl;
 	cout << "-   : Giam khoang cach camera" << endl;
-	cout << "up arrow  : Tang chieu cao camera" << endl;
-	cout << "down arrow: Giam chieu cao camera" << endl;
-	cout << "<-        : Quay camera theo chieu kim dong ho" << endl;
-	cout << "->        : Quay camera nguoc chieu kim dong ho" << endl;
+	cout << "up arrow   : Tang chieu cao camera" << endl;
+	cout << "down arrow : Giam chieu cao camera" << endl;
+	cout << "<-         : Quay camera theo chieu kim dong ho" << endl;
+	cout << "->         : Quay camera nguoc chieu kim dong ho" << endl;
 	
-	for (int i = 0; i < 2000; i++) {
-		arr[i] = rand() % 4;
-	}
-	
-	lightState = true;
-	
-	camera[0] = camera_dis * cos(DEGRADIAN * (camera_angle));
-	camera[1] = camera_height;
-	camera[2] = camera_dis * sin(DEGRADIAN * (camera_angle ));
+	camera[0] = bankinh_camera * cos((PI / 180.0) * (doxoay_camera));
+	camera[1] = chieu_cao_camera;
+	camera[2] = bankinh_camera * sin((PI / 180.0) * (doxoay_camera ));
 	state2D = false;
-
 	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat shininess = 40.0;
-
-
-
 	float size_canhquat = 1.1;
-	
 	canhquat1.Createcanhquat(size_canhquat);
-	canhquat1.vectorNewell();
+	canhquat1.v_new();
 	canhquat1.addMaterial(ambient, diffuse, specular, shininess);
 	canhquat2.Createcanhquat2(size_canhquat);
-	canhquat2.vectorNewell();
+	canhquat2.v_new();
 	canhquat2.addMaterial(ambient, diffuse, specular, shininess);
 	canhquat3.Createcanhquat3(size_canhquat);
-	canhquat3.vectorNewell();
+	canhquat3.v_new();
 	canhquat3.addMaterial(ambient, diffuse, specular, shininess);
 	canhquat4.Createcanhquat4(size_canhquat);
-	canhquat4.vectorNewell();
+	canhquat4.v_new();
 	canhquat4.addMaterial(ambient, diffuse, specular, shininess);
 	canhquat5.Createcanhquat5(size_canhquat);
-	canhquat5.vectorNewell();
+	canhquat5.v_new();
 	canhquat5.addMaterial(ambient, diffuse, specular, shininess);
 	canhquat6.Createcanhquat6(size_canhquat);
-	canhquat6.vectorNewell();
+	canhquat6.v_new();
 	canhquat6.addMaterial(ambient, diffuse, specular, shininess);
 	
 	nuavongtrong1_1.CreateNuaVongTron(size_canhquat, 2, 1);
-	nuavongtrong1_1.vectorNewell();
+	nuavongtrong1_1.v_new();
 	nuavongtrong1_1.addMaterial(ambient, diffuse, specular, shininess);
 	
 	nuavongtrong1_2.CreateNuaVongTron2(size_canhquat, 2, 1);
-	nuavongtrong1_2.vectorNewell();
+	nuavongtrong1_2.v_new();
 	nuavongtrong1_2.addMaterial(ambient, diffuse, specular, shininess);
 	
 	nuavongtrong1_3.CreateNuaVongTron3(size_canhquat, 2, 1);
-	nuavongtrong1_3.vectorNewell();
+	nuavongtrong1_3.v_new();
 	nuavongtrong1_3.addMaterial(ambient, diffuse, specular, shininess);
 
 	float size_thanhlienket1 = 5.0;
 	float size_thanhlienket2 = 6.0;
 	int mau_thanhlienket = 3;
-	rectangular1.CreateRectangular(0.4, 1, size_thanhlienket1);
+	rectangular1.CreateMotPhanThanhLienKet(0.4, 1, size_thanhlienket1);
 	rectangular1.SetColor(mau_thanhlienket);
-	rectangular1.vectorNewell();
+	rectangular1.v_new();
 	rectangular1.addMaterial(ambient, diffuse, specular, shininess);
-	rectangular2.CreateRectangular(0.4, 1, size_thanhlienket1);
+	rectangular2.CreateMotPhanThanhLienKet(0.4, 1, size_thanhlienket1);
 	rectangular2.SetColor(mau_thanhlienket);
-	rectangular2.vectorNewell();
+	rectangular2.v_new();
 	rectangular2.addMaterial(ambient, diffuse, specular, shininess);
-	rectangular3.CreateRectangular(0.4, 1, size_thanhlienket2);
+	rectangular3.CreateMotPhanThanhLienKet(0.4, 1, size_thanhlienket2);
 	rectangular3.SetColor(mau_thanhlienket);
-	rectangular3.vectorNewell();
+	rectangular3.v_new();
 	rectangular3.addMaterial(ambient, diffuse, specular, shininess);
-	rectangular4.CreateRectangular(0.4, 1, size_thanhlienket2);
+	rectangular4.CreateMotPhanThanhLienKet(0.4, 1, size_thanhlienket2);
 	rectangular4.SetColor(mau_thanhlienket);
-	rectangular4.vectorNewell();
+	rectangular4.v_new();
 	rectangular4.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrongthangiua.CreateNuaVongTronThanGiua(0.6, 0.4, 1, 1);
 	nuavongtrongthangiua.SetColor(mau_thanhlienket);
-	nuavongtrongthangiua.vectorNewell();
+	nuavongtrongthangiua.v_new();
 	nuavongtrongthangiua.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrongthangiua2.CreateNuaVongTronThanGiua(0.6, 0.4, 1, -1);
 	nuavongtrongthangiua2.SetColor(mau_thanhlienket);
-	nuavongtrongthangiua2.vectorNewell();
+	nuavongtrongthangiua2.v_new();
 	nuavongtrongthangiua2.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrongthangiua3.CreateNuaVongTronThanGiua2(0.6, size_thanhlienket1, 1, -1);
 	nuavongtrongthangiua3.SetColor(mau_thanhlienket);
-	nuavongtrongthangiua3.vectorNewell();
+	nuavongtrongthangiua3.v_new();
 	nuavongtrongthangiua3.addMaterial(ambient, diffuse, specular, shininess);
 	nuavongtrongthangiua4.CreateNuaVongTronThanGiua2(0.6, size_thanhlienket2, 1, -1);
 	nuavongtrongthangiua4.SetColor(mau_thanhlienket);
-	nuavongtrongthangiua4.vectorNewell();
+	nuavongtrongthangiua4.v_new();
 	nuavongtrongthangiua4.addMaterial(ambient, diffuse, specular, shininess);
 
 	int mau_chot = 4;
 	chot1.CreateHinhTru(32, 1, 0.6);
 	chot1.SetColor(mau_chot);
-	chot1.vectorNewell();
+	chot1.v_new();
 	chot1.addMaterial(ambient, diffuse, specular, shininess);
 	chot2.CreateHinhTru(32, 1, 0.6);
 	chot2.SetColor(mau_chot);
-	chot2.vectorNewell();
+	chot2.v_new();
 	chot2.addMaterial(ambient, diffuse, specular, shininess);
 	int mau_truc = 5;
 	daytruc.CreateHinhTru(32,2,0.6);
 	daytruc.SetColor(mau_truc);
-	daytruc.vectorNewell();
+	daytruc.v_new();
 	daytruc.addMaterial(ambient, diffuse, specular, shininess);
 
 	thantruc.CreateHinhTru(8, 1.5, 0.5);
 	thantruc.SetColor(mau_truc);
-	thantruc.vectorNewell();
+	thantruc.v_new();
 	thantruc.addMaterial(ambient, diffuse, specular, shininess);
 	int mau_goido = 6;
 
 	goido.CreateHinhTru(8, 0.8, 0.8);
 	goido.SetColor(mau_goido);
-	goido.vectorNewell();
+	goido.v_new();
 	goido.addMaterial(ambient, diffuse, specular, shininess);
-	glutKeyboardFunc(OnKeyboard);
+	glutKeyboardFunc(OnKeyBoard);
 	glutSpecialFunc(OnKeySpecial);
 	myInit();
 	glutDisplayFunc(myDisplay);
 	glutMainLoop();
-	delete[] arr;
+	
 	return 0;
 }
